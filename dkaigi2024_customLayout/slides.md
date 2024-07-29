@@ -24,617 +24,490 @@ transition: slide-left
 mdc: true
 ---
 
-# Welcome to Slidev
-
-Presentation slides for developers
-
-<div class="pt-12">
-  <span @click="$slidev.nav.next" class="px-2 py-1 rounded cursor-pointer" hover="bg-white bg-opacity-10">
-    Press Space for next page <carbon:arrow-right class="inline"/>
-  </span>
-</div>
-
-<div class="abs-br m-6 flex gap-2">
-  <button @click="$slidev.nav.openInEditor()" title="Open in Editor" class="text-xl slidev-icon-btn opacity-50 !border-none !hover:text-white">
-    <carbon:edit />
-  </button>
-  <a href="https://github.com/slidevjs/slidev" target="_blank" alt="GitHub" title="Open in GitHub"
-    class="text-xl slidev-icon-btn opacity-50 !border-none !hover:text-white">
-    <carbon-logo-github />
-  </a>
-</div>
-
-<!--
-The last comment block of each slide will be treated as slide notes. It will be visible and editable in Presenter Mode along with the slide. [Read more in the docs](https://sli.dev/guide/syntax.html#notes)
--->
 
 ---
-transition: fade-out
+layout: default
 ---
 
-# What is Slidev?
+# 表紙
 
-Slidev is a slides maker and presenter designed for developers, consist of the following features
-
-- 📝 **Text-based** - focus on the content with Markdown, and then style them later
-- 🎨 **Themable** - themes can be shared and re-used as npm packages
-- 🧑‍💻 **Developer Friendly** - code highlighting, live coding with autocompletion
-- 🤹 **Interactive** - embed Vue components to enhance your expressions
-- 🎥 **Recording** - built-in recording and camera view
-- 📤 **Portable** - export to PDF, PPTX, PNGs, or even a hostable SPA
-- 🛠 **Hackable** - virtually anything that's possible on a webpage is possible in Slidev
-<br>
-<br>
-
-Read more about [Why Slidev?](https://sli.dev/guide/why)
-
-<!--
-You can have `style` tag in markdown to override the style for the current page.
-Learn more: https://sli.dev/guide/syntax#embedded-styles
--->
-
-<style>
-h1 {
-  background-color: #2B90B6;
-  background-image: linear-gradient(45deg, #4EC5D4 10%, #146b8c 20%);
-  background-size: 100%;
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -moz-text-fill-color: transparent;
-}
-</style>
-
-<!--
-Here is another comment.
--->
+始めたいと思います、よろしくお願いします。
 
 ---
-transition: slide-up
-level: 2
+layout: default
 ---
 
-# Navigation
+# 自己紹介
 
-Hover on the bottom-left corner to see the navigation's controls panel, [learn more](https://sli.dev/guide/navigation.html)
-
-## Keyboard Shortcuts
-
-|     |     |
-| --- | --- |
-| <kbd>right</kbd> / <kbd>space</kbd>| next animation or slide |
-| <kbd>left</kbd>  / <kbd>shift</kbd><kbd>space</kbd> | previous animation or slide |
-| <kbd>up</kbd> | previous slide |
-| <kbd>down</kbd> | next slide |
-
-<!-- https://sli.dev/guide/animations.html#click-animations -->
-<img
-  v-click
-  class="absolute -bottom-9 -left-7 w-80 opacity-50"
-  src="https://sli.dev/assets/arrow-bottom-left.svg"
-  alt=""
-/>
-<p v-after class="absolute bottom-23 left-45 opacity-30 transform -rotate-10">Here!</p>
+ウンタラカンタラ
 
 ---
-layout: two-cols
-layoutClass: gap-16
+layout: default
 ---
 
-# Table of contents
+# 目次
 
-You can use the `Toc` component to generate a table of contents for your slides:
-
-```html
-<Toc minDepth="1" maxDepth="1"></Toc>
-```
-
-The title will be inferred from your slide content, or you can override it with `title` and `level` in your frontmatter.
-
-::right::
-
-<Toc v-click minDepth="1" maxDepth="2"></Toc>
+ウンタラカンタラ
 
 ---
-layout: image-right
-image: https://cover.sli.dev
+layout: default
 ---
 
-# Code
+# 今日作るもの
 
-Use code snippets and get the highlighting directly, and even types hover![^1]
+では初めて行きましょう。
+今日は、使って知るCustomLayoutということで、何も知らない状態から、ちょっとしたCustomLayoutを作ルことで、理解を深めていきます。
 
-```ts {all|5|7|7-8|10|all} twoslash
-// TwoSlash enables TypeScript hover information
-// and errors in markdown code blocks
-// More at https://shiki.style/packages/twoslash
+何を作るかというと、こちらです。
+カレンダーアプリとかでよくWeeklyとかで表示されるうちの一日分を作っていきます。
+このSession内ではDailySchedulerと呼ぶことにします。
 
-import { computed, ref } from 'vue'
-
-const count = ref(0)
-const doubled = computed(() => count.value * 2)
-
-doubled.value = 2
-```
-
-<arrow v-click="[4, 5]" x1="350" y1="310" x2="195" y2="334" color="#953" width="2" arrowSize="1" />
-
-<!-- This allow you to embed external code blocks -->
-<<< @/snippets/external.ts#snippet
-
-<!-- Footer -->
-[^1]: [Learn More](https://sli.dev/guide/syntax.html#line-highlighting)
-
-<!-- Inline style -->
-<style>
-.footnotes-sep {
-  @apply mt-5 opacity-10;
-}
-.footnotes {
-  @apply text-sm opacity-75;
-}
-.footnote-backref {
-  display: none;
-}
-</style>
-
-<!--
-Notes can also sync with clicks
-
-[click] This will be highlighted after the first click
-
-[click] Highlighted with `count = ref(0)`
-
-[click:3] Last click (skip two clicks)
--->
+具体的には
+- 時刻に合わせた縦軸表示  
+- 時刻と対応したイベントの配置・サイズの調整  
+- 同時刻に複数イベントがあった際の幅の調整  
+- イベントのドラッグ&ドロップ
+- 時刻へのスナッピング  
+- 遅延Redering  
 
 ---
-level: 2
+layout: default
 ---
 
-# Shiki Magic Move
+# CostomLayoutとは
 
-Powered by [shiki-magic-move](https://shiki-magic-move.netlify.app/), Slidev supports animations across multiple code snippets.
+ちょっと最初に謝らなければいけないんですが、ComposeにCustomLayoutという関数はありません。
+なので今日の話は、厳密にはCostomLayoutを作成するためのLayout関数の話になります。
+https://developer.android.com/develop/ui/compose/layouts/custom
 
-Add multiple code blocks and wrap them with <code>````md magic-move</code> (four backticks) to enable the magic move. For example:
 
-````md magic-move {lines: true}
-```ts {*|2|*}
-// step 1
-const author = reactive({
-  name: 'John Doe',
-  books: [
-    'Vue 2 - Advanced Guide',
-    'Vue 3 - Basic Guide',
-    'Vue 4 - The Mystery'
-  ]
-})
-```
+じゃあこのLayout関数がどういうものなのかを知るために、まず毎度お馴染みのcoposeの3Stepを確認する必要があります。
 
-```ts {*|1-2|3-4|3-4,8}
-// step 2
-export default {
-  data() {
-    return {
-      author: {
-        name: 'John Doe',
-        books: [
-          'Vue 2 - Advanced Guide',
-          'Vue 3 - Basic Guide',
-          'Vue 4 - The Mystery'
-        ]
-      }
-    }
-  }
-}
-```
-
-```ts
-// step 3
-export default {
-  data: () => ({
-    author: {
-      name: 'John Doe',
-      books: [
-        'Vue 2 - Advanced Guide',
-        'Vue 3 - Basic Guide',
-        'Vue 4 - The Mystery'
-      ]
-    }
-  })
-}
-```
-
-Non-code blocks are ignored.
-
-```vue
-<!-- step 4 -->
-<script setup>
-const author = {
-  name: 'John Doe',
-  books: [
-    'Vue 2 - Advanced Guide',
-    'Vue 3 - Basic Guide',
-    'Vue 4 - The Mystery'
-  ]
-}
-</script>
-```
-````
 
 ---
+layout: default
+---
+耳にタコでしょうね
+# composeのサンステップ
 
-# Components
+composition
 
-<div grid="~ cols-2 gap-4">
-<div>
+layout
 
-You can use Vue components directly inside your slides.
+draw
 
-We have provided a few built-in components like `<Tweet/>` and `<Youtube/>` that you can use directly. And adding your custom components is also super easy.
+があります
 
-```html
-<Counter :count="10" />
-```
+compositionはインスタンスを作る
 
-<!-- ./components/Counter.vue -->
-<Counter :count="10" m="t-4" />
+Columnとかで例に出す
 
-Check out [the guides](https://sli.dev/builtin/components.html) for more.
+layout、
+子要素のサイズを測定して配置して自分のサイズを確定する
 
-</div>
-<div>
+Columnでは自動でやってくれる
+offsetの例
 
-```html
-<Tweet id="1390115482657726468" />
-```
+draw 描画
+drawabackgroundの例
 
-<Tweet id="1390115482657726468" scale="0.65" />
 
-</div>
-</div>
-
-<!--
-Presenter note with **bold**, *italic*, and ~~striked~~ text.
-
-Also, HTML elements are valid:
-<div class="flex w-full">
-  <span style="flex-grow: 1;">Left content</span>
-  <span>Right content</span>
-</div>
--->
+Layout関数はこのLayout部分を自分で実装するという話になります。
 
 ---
-class: px-20
+layout: default
 ---
 
-# Themes
+# 少し詳しく
 
-Slidev comes with powerful theming support. Themes can provide styles, layouts, components, or even configurations for tools. Switching between themes by just **one edit** in your frontmatter:
+例えばColmunもこの関数を使って作られています。
+こんな感じで重ならないように順番に置きますよーとあります。
 
-<div grid="~ cols-2 gap-2" m="t-2">
+なので、半分重なるように置きたいんだ！
+みたいな場合にこのLayout部分をいじることで、実現できます。
+ずらすだけなので、offsetつければいけるかも、と思ったりするんですが、Colmunでやろうと思っても、compositionのタイミングではTextの高さがわからないので、できません。
+なのでLayoutフェーズで高さを測定してから、位置を決めて配置する必要があります。
 
-```yaml
----
-theme: default
----
-```
 
-```yaml
----
-theme: seriph
----
-```
+ちなみに、ここを半分重なる、ではなく10dp重ねたいんだ！とする場合はLayout使わず可能ですね。
 
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-default/01.png?raw=true" alt="">
-
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-seriph/01.png?raw=true" alt="">
-
-</div>
-
-Read more about [How to use a theme](https://sli.dev/themes/use.html) and
-check out the [Awesome Themes Gallery](https://sli.dev/themes/gallery.html).
 
 ---
-
-# Clicks Animations
-
-You can add `v-click` to elements to add a click animation.
-
-<div v-click>
-
-This shows up when you click the slide:
-
-```html
-<div v-click>This shows up when you click the slide.</div>
-```
-
-</div>
-
-<br>
-
-<v-click>
-
-The <span v-mark.red="3"><code>v-mark</code> directive</span>
-also allows you to add
-<span v-mark.circle.orange="4">inline marks</span>
-, powered by [Rough Notation](https://roughnotation.com/):
-
-```html
-<span v-mark.underline.orange>inline markers</span>
-```
-
-</v-click>
-
-<div mt-20 v-click>
-
-[Learn More](https://sli.dev/guide/animations#click-animations)
-
-</div>
-
+layout: default
 ---
 
-# Motions
+# Layout関数以外の選択肢
 
-Motion animations are powered by [@vueuse/motion](https://motion.vueuse.org/), triggered by `v-motion` directive.
+- subcomopseLayout
+- BoxWithConstraint
+- Modifier.layout
 
-```html
-<div
-  v-motion
-  :initial="{ x: -80 }"
-  :enter="{ x: 0 }"
-  :click-3="{ x: 80 }"
-  :leave="{ x: 1000 }"
->
-  Slidev
-</div>
-```
+などがあります。
 
-<div class="w-60 relative">
-  <div class="relative w-40 h-40">
-    <img
-      v-motion
-      :initial="{ x: 800, y: -100, scale: 1.5, rotate: -50 }"
-      :enter="final"
-      class="absolute inset-0"
-      src="https://sli.dev/logo-square.png"
-      alt=""
-    />
-    <img
-      v-motion
-      :initial="{ y: 500, x: -100, scale: 2 }"
-      :enter="final"
-      class="absolute inset-0"
-      src="https://sli.dev/logo-circle.png"
-      alt=""
-    />
-    <img
-      v-motion
-      :initial="{ x: 600, y: 400, scale: 2, rotate: 100 }"
-      :enter="final"
-      class="absolute inset-0"
-      src="https://sli.dev/logo-triangle.png"
-      alt=""
-    />
-  </div>
+これはそれぞれこう・こう・こうという感じになりますので、用途に合わせて選びましょう。
 
-  <div
-    class="text-5xl absolute top-14 left-40 text-[#2B90B6] -z-1"
-    v-motion
-    :initial="{ x: -80, opacity: 0}"
-    :enter="{ x: 0, opacity: 1, transition: { delay: 2000, duration: 1000 } }">
-    Slidev
-  </div>
-</div>
+今回は複数の要素があって、カレンダーのイベントは必ず配置するんだけど長さと位置が変わるだけということでLayoutを利用します。
 
-<!-- vue script setup scripts can be directly used in markdown, and will only affects current page -->
-<script setup lang="ts">
-const final = {
-  x: 0,
-  y: 0,
-  rotate: 0,
-  scale: 1,
-  transition: {
-    type: 'spring',
-    damping: 10,
-    stiffness: 20,
-    mass: 2
-  }
-}
-</script>
+上からここまで5分
 
-<div
-  v-motion
-  :initial="{ x:35, y: 30, opacity: 0}"
-  :enter="{ y: 0, opacity: 1, transition: { delay: 3500 } }">
 
-[Learn More](https://sli.dev/guide/animations.html#motion)
 
-</div>
+
+-------------------------------------------
+
 
 ---
-
-# LaTeX
-
-LaTeX is supported out-of-box. Powered by [KaTeX](https://katex.org/).
-
-<div h-3 />
-
-Inline $\sqrt{3x-1}+(1+x)^2$
-
-Block
-$$ {1|3|all}
-\begin{aligned}
-\nabla \cdot \vec{E} &= \frac{\rho}{\varepsilon_0} \\
-\nabla \cdot \vec{B} &= 0 \\
-\nabla \times \vec{E} &= -\frac{\partial\vec{B}}{\partial t} \\
-\nabla \times \vec{B} &= \mu_0\vec{J} + \mu_0\varepsilon_0\frac{\partial\vec{E}}{\partial t}
-\end{aligned}
-$$
-
-[Learn more](https://sli.dev/guide/syntax#latex)
-
+layout: default
 ---
 
-# Diagrams
+# 時刻の配置
 
-You can create diagrams / graphs from textual descriptions, directly in your Markdown.
+まずは時刻を配置しながら、Layoutの基本を学んでいきます。
 
-<div class="grid grid-cols-4 gap-5 pt-4 -mb-6">
+正直Layoutの使い方に関してはここだけで大体わかります。
 
-```mermaid {scale: 0.5, alt: 'A simple sequence diagram'}
-sequenceDiagram
-    Alice->John: Hello John, how are you?
-    Note over Alice,John: A typical interaction
-```
+さて、まずは要素と並びを確認します。
 
-```mermaid {theme: 'neutral', scale: 0.8}
-graph TD
-B[Text] --> C{Decision}
-C -->|One| D[Result 1]
-C -->|Two| E[Result 2]
-```
+すごくシンプルで、時刻があって、その時刻が一定の間隔で並びます。
 
-```mermaid
-mindmap
-  root((mindmap))
-    Origins
-      Long history
-      ::icon(fa fa-book)
-      Popularisation
-        British popular psychology author Tony Buzan
-    Research
-      On effectiveness<br/>and features
-      On Automatic creation
-        Uses
-            Creative techniques
-            Strategic planning
-            Argument mapping
-    Tools
-      Pen and paper
-      Mermaid
-```
+時刻があって、一時間分の間隔でまた時刻がある、それを時刻の分だけ繰り返します。
 
-```plantuml {scale: 0.7}
-@startuml
+では、実際のコードを考えていきます。
 
-package "Some Group" {
-  HTTP - [First Component]
-  [Another Component]
-}
+まずはお馴染みのComposableでLayout、ここでは一応ユーザーの好きなlabelを渡せるようにしておきます。
 
-node "Other Groups" {
-  FTP - [Second Component]
-  [First Component] --> FTP
-}
+そして、ラベルを時刻分だけ作成し、Layoutに渡します。
+こうすることでこのComposeがLayoutにmeasurableとして入ってくるようになります。（表現として正しいかは微妙です）
 
-cloud {
-  [Example 1]
-}
+widthやheightはpxなので注意する必要があります。
 
-database "MySql" {
-  folder "This is my folder" {
-    [Folder 3]
-  }
-  frame "Foo" {
-    [Frame 4]
-  }
-}
+ではいよいよLayoutフェーズをゴニョゴニョしていきましょう。
 
-[Another Component] --> [Example 1]
-[Example 1] --> [Folder 3]
-[Folder 3] --> [Frame 4]
+ここでの登場人物はまずmeasurableとconstraints
 
-@enduml
-```
+mesurableがconstraintを使って要素のサイズを計ります。
 
-</div>
+// TODO
+constraintっていうのは親の制約が入ってきます。（具体的な例を出す）
 
-[Learn More](https://sli.dev/guide/syntax.html#diagrams)
+// TODOちゃんとした表現
+mesurableが何かと言われるとちょっとわからんのですが、まあ対応するcomposeのサイズ測定するためのクラスですね多分。
+
+// TODO深掘り
+このようなコードで計り、その結果が今度はPlaceableに入ってきます。
+Placeableからは測定した高さや幅が取れるので、これを使って今度は配置を決めていきます。
+
+今回はよこは渡したラベルのテキストはば、縦は固定値で入れたいので、縦のminheit,maxheitに固定の高さを入れます。
+この固定値は結構よく使うので、miniutHeightとしてdpで定義して、pxで持っておきます。
+
+// TODO このような場合はテキストのサイズになり、fillMaxならマックスになる。親の制約を受ける。みたいな話を言いたい
+
+最後にlayoutします。
+
+offsetを指定できます左上が0,0なので下に動かしたければoffsetYを+に指定します。右に動かしたければoffsetXを+に指定します。
+
+offsetは高さ* indexにになるので単純に足していきます。
+
+はい、こんな感じで特に難しいことはなく、できましたね。これができれば基本は大体抑えられていると思うのでご安心ください。
+
+2分
+
 
 ---
-foo: bar
-dragPos:
-  square: 691,32,167,_,-16
+layout: default
 ---
 
-# Draggable Elements
+# 時刻に合わせた縦軸表示
 
-Double-click on the draggable elements to edit their positions.
 
-<br>
+// TODO 動画かページ見て確認
+線を引くのには二つ考えられる方法があって、一つはラベルの背景としてかく、もう一つはdividerとして置くです。
+どちらかというと多分背景として書く方がコストは安く済むと思うのですが、今回はdividerとしておいています。
 
-###### Directive Usage
+そうしておくと、例えば点線にしたいとか、ピンクにしたいとか、そう言うユーザーのニーズに応えやすいので、それはそれで良いかなと思います
 
-```md
-<img v-drag="'square'" src="https://sli.dev/logo.png">
-```
+先ほど、時刻ラベルを渡したのと同様にdeviderも渡していきます。
 
-<br>
+//TODO調べる
+ここでワンポイントなんですが、Layout関数にContentsとしてListのListを受け取るものとContentを受け取るものがあり、後者の場合は全てひらのリストで渡されますが、前者の場合はこんな感じでlistのリストで受け取れるので、渡すcompoeseが複数種類ある場合はこちらを使う方が都合がいいです。
 
-###### Component Usage
 
-```md
-<v-drag text-3xl>
-  <carbon:arrow-up />
-  Use the `v-drag` component to have a draggable container!
-</v-drag>
-```
+では見てみましょう。
+これはすごく簡単で、測定したあと、時効と同じ位置におけばokです。
 
-<v-drag pos="663,206,261,_,-15">
-  <div text-center text-3xl border border-main rounded>
-    Double-click me!
-  </div>
-</v-drag>
-
-<img v-drag="'square'" src="https://sli.dev/logo.png">
-
-###### Draggable Arrow
-
-```md
-<v-drag-arrow two-way />
-```
-
-<v-drag-arrow pos="67,452,253,46" two-way op70 />
+1分
 
 ---
-src: ./pages/multiple-entries.md
-hide: false
+layout: default
 ---
 
+# 時刻と対応したイベントの配置・サイズの調整  
+
+さて、いよいよイベントを置いていきます。
+
+まずはイベントのデータ構造を考えていきます。
+
+とりあえず表示に必要な最低限の情報としては
+start
+end
+id
+があれば置くことが可能です。
+タイトルとか、詳細とかは見た目の問題なので、ユーザーが使いたければ定義して使えるようにと言うことで、とりあえずこれらをinterfaceとして定義します。　(TODO 冗長かもね)
+
+イベントのリストから、ebentのcomposeを同じだけ作って渡します。
+
+これでLayoutの中でサイズを時間の長さに合わせて、開始位置をlabelの位置と合わせればよいのですがここで一つ問題があります。
+入ってきたmesurabeはeventの情報を持っていないと言うことです。
+
+開始時刻と終了時刻を知りたいなあと思っても取ってくることができません。
+
+そこで
+- ParentDataModifier
+を使います。
+
+これを利用することで、任意のdataをparentに伝えることが可能です。
+
+使い方は結構簡単で
+
+こんな感じで定義して
+
+modifierに追加します。
+
+これで、このようにdataを取ってくることが可能です。
+
+そうすれば、開始と終了が取れます。
+
+では、まず高さを開始と終了時刻から計測します。
+
+今回は高さを指定したいので、まずは単純に高さを計算します。
+そしてmaxでもminでもこの高さですよ、と制限を変更して、測定します。
+
+これでこうなります。
+
+あとは一を自国にそろえます。
+
+やりました。
+
+1.5分
+
+
+---
+layout: default
 ---
 
-# Monaco Editor
+# 同時刻に複数イベントがあった際の幅の調整
 
-Slidev provides built-in Monaco Editor support.
+さて、次はこういう状態ですね。
 
-Add `{monaco}` to the code block to turn it into an editor:
+1,重なりのあるイベントをグルーピング
+2,グループのかずに合わせて幅を調整
+3,グループ内の位置に合わせてxOffsetを調整
 
-```ts {monaco}
-import { ref } from 'vue'
-import { emptyArray } from './external'
+1に関してはCustomLayoutあんまり関係ないんで軽くなんですが。
 
-const arr = ref(emptyArray(10))
-```
+まずはGeminiに聞いてgroupingするコードを書いてもらいます
 
-Use `{monaco-run}` to create an editor that can execute the code directly in the slide:
+プロンプトはこんな感じで適当に聞いたんですが、普通に動くコードを出してくれました。これ多分自分じゃ描けなかったので本当に助かりましたね。
+ 
+> List< CalendarEvent >があった時、 時間的に重なりがあるEventをグルーピングする処理をKotlinで書いて
 
-```ts {monaco-run}
-import { version } from 'vue'
-import { emptyArray, sayHello } from './external'
 
-sayHello()
-console.log(`vue ${version}`)
-console.log(emptyArray<number>(10).reduce(fib => [...fib, fib.at(-1)! + fib.at(-2)!], [1, 1]))
-```
+いくつか試したり、テストしたりして、今回は一部間違っていたので修正して、重なりがあるeventごとにlistのlistにしてみました。
+
+で、データに、自分が何人のグループの何番目のアイテムなのか、を追加で持たせます。
+layoutのタイミングで幅と位置を知る必要があるためです。
+
+これで準備完了です。
+
+ちなみにこれはlayoutのラムダの中でやってもいいように見えますが、そうするとcompositionは走らないがlayoutが走るような場合、次にやるイベントをドラッグしている時とかですね、にも処理が走ってしまって無駄なので、今回のケースではcompositionの方でやっています。
+
+ドラッグに合わせてここの表示も更新する場合はlayoutでやる必要があるかもしれません。
+
+あとは特に特別なことはなくて、幅を制限して測定して、xをpositionに合わせて配置するだけで完成です。
+
+1.5
 
 ---
-layout: center
-class: text-center
+layout: default
 ---
 
-# Learn More
+#  イベントのドラッグ&ドロップ
 
-[Documentation](https://sli.dev) · [GitHub](https://github.com/slidevjs/slidev) · [Showcases](https://sli.dev/showcases.html)
+さて、つづいが結構悩ましそうなドラッグ＆ドロップの実装です。
 
-<PoweredBySlidev mt-10 />
+この動きですね。
+
+思いつく方針としては、二つありました
+
+1. 各イベントアイテムにDraggableをつけてそれぞれでドラッグを管理する
+2. カスタムViewにpointerInputをつけて管理する
+
+今回は1を選択しました。
+1の方が簡単そうだったからですね。
+2だとドラッグの開始位置からどのイベントをドラッグするのかを計算する必要があってそれがなんとなくめんどくさそうだったためです。
+ドラッグでもっと色々な動きを、入れ替えとかするのであれば2の方針も検討する必要がありそうです。
+
+では具体的な実装を見てみましょう
+
+事前準備として、ドラッグしたアイテムのY位置のオフセットを大元のcomposeに持たせます。
+ 
+<!-- var draggingItemYOffset: Float by remember {  
+    mutableFloatStateOf(0f)  
+} -->
+
+そして、各イベントにはドラッグ状態を表すisDraggingを持たせます。
+
+offsetを各イベントに持たせず大元に持たせるのは、ここの値はdrag中に頻繁に書き換えるため、リストの中のアイテムのパラメータとして持たせると更新に多少コストがかかりそうだと思ったからです。おそらくよほどアイテムの量が多くなければ中に持たせても特に問題はないとは思います。
+逆にdragg中のイベントがどれかという情報を大元にもたせなかったのは、drag中はイベントの色を変えるなど、各イベントcomponentで見た目を変更する際に参照したかったからです。
+// TODO isDragも持たせればいいのでは？
+
+やることは結構簡単で、まず、ebentにDraggableをつけます。
+
+// TODOcode
+
+中身はこんな感じで、ドラッグ開始でドラッグをtrueにする、endでfalseにする。
+そして、移動のたびにyOffsetを更新します。
+
+そして、Layoutのblockの中でもしtrueだった場合に、offSetぶんずらしてやるようにしていきましょう。
+
+こんな感じになります。
+// CODE
+
+ここで、一つ大事なことがあります。
+
+移動中にyOffSetが更新し続けられるのですが、これをreadしているところはlayoutのblock内だけなので、理論的にはCompositionのフェーズをスキップしてlayoutとドローのフェイズのみ実行させることができそうですよね。
+
+ただ、実際にやってみると、こんな感じでドラッグ中に動かしているアイテム以外もcompositionが走ってしまいます。
+// TODO動画
+
+これは、composeにこのListが安定していないとみなされている、skipできていない状態になっています。
+
+そこでですね、こちらの手順を踏んで、Listは安定しているんだと教えてあげると、無事スキップされるようになります。
+
+知らないとそのままにしてしまうところではあるよなあと思ったので是非今日はここだけでも覚えて帰っていただければと思います。
+
+さて、ドラッグの話に戻ります。
+
+あとはですね、isDragを見て、見た目もこんな感じに半透明にするとかやってあげれば完成です。
+
+ドラッグが終わったタイミングで大抵eventの更新をリポジトリなどを通してすることがあるのでonFinishのイベントを発生させる必要があるのですが、それはスナッピングの後に考えてみましょう。
+
+
+4--
+layout: default-
+---
+分
+# 時刻へのスナッピング  
+
+次はスナッピングですね。
+
+この動きですね。今回は5の倍数の分にスナップしてみます
+
+やることは簡単で、ドラッグ中は単純にoffsetを反映した位置ではなく一番近い5で割れるふんの位置に起くだけです。
+
+なので、まずはgeminiに聞きます
+
+こんな感じで聞くと
+
+まあロジックを書いてくれるので、あってるかなあっていうのを読んでまああってそうだったので使います。
+
+これで一番近い置き場所がわかるので、あとは、まず時から位置を取ってきて、その後一番近いふんの分だけoffsetを足してやります。
+
+そしてあとはおく。と。
+
+これでokです
+
+ついでに先ほど実装しなかったドラッグが終わったイベントを発行しましょう。
+
+ドラッグが終わった時に、ドラッグされたイベントが何時何分に移動されたかは、このlayoutblockの中でしかまだわからないので、onDragFinishで使えるように外に値を反映してやる必要があります。
+
+eventItemに持たせるか、親のこんぽーずにもたせるかどっちでもやれるのですが、今回は親のコンポーズに持たせてみます。パフォーマンスの点で少し部があるためです。
+
+というのも、layoutBlockではdragがいつ終わったかは検知できないので、普通にやるとdragのたびにイベントを更新することになり、それによってcompositionが入るため、若干コストがかかります。
+一方、親で持ってその値を使う場合は、readがonFinishのタイミングのみになりますから、ドラッグ中は相変わらずComposeitionが走りません。
+
+ということで、やってみます。
+
+こんな感じでできそうですが、実際に動かしてみると、値が更新されていません。
+
+これもCustomLayoutに限らないポイントなんですが、Listenerの中でstateをみている場合はUpdatedStateを使わないと最新の値がつかわれないのでご注意ください。
+
+ということで、UpdatedStateを使い無事通知されました。
+compositionも走っていませんね。
+
+2分
+
+
+---
+layout: default
+---
+
+# 遅延Redering  
+
+いよいよ最後に遅延レンダリングです。
+最初に言っておくと、結構力技で無理やりやっているので、流石にもうちょっとマシなやり方あるだろうという感じではあるのですが、参考程度に聞いていただければと思います。
+
+正直デイリーのカレンダーで遅延レンダリングを必要とすることって普通ないとは思うんですが、それだとモチベーションも湧かないので今回は365日分を縦に並べてみようと思います。
+
+単純に365日表示してみると、しっかりアウトオブメモリでクラッシュします。（久しぶりに見た）
+
+これを表示して、スクロールできるように頑張ってみます。
+
+とりあえず遅延レンダリングといえばLazy系のComposeでしょうということでLayColmunを読んでみたんですが、難しくてよくわからない上に最終的にSubComposeLayoutを使っていました。
+
+確かに、表示しないところはそもそもCoposeを配置しないというのが正しいのでSubComposeLayoutを使うと良さそうではあるのですが、今回はどうしてもLayoutで済ませたいのでLayoutでできないかを考えてみます。
+
+SubComposeLayoutを使う必要があるケースとしてはlayoutフェーズで測定するまでどの要素を配置すべきかが確定しないケースがあります。Lazy系のものはまさにそれで、ユーザーが渡してくるcomposeによってアイテムのサイズが変わるため、何個配置すべきかが測定するまでわからないので、SubComposeLayoutでないと実現が難しそうです。
+一方で今回の我々のケースでは、中のアイテムのサイズは時刻と固定値にって計算できるのでLayoutより前に決められます。
+つまり、Layoutでも、必要な分だけComposeを渡すということができそうですね。
+パフォーマンスの懸念はありそうですが、とりあえずやってみます。
+
+手順としては、
+
+viewPortから画面に表示できる個数を計算する
+scrollのoffsetから今表示したいindexを計算する
+indexと個数から今表示したい時刻を決める
+表示する時刻から表示するeventを決める
+今まで通りの処理に渡す
+
+こんな感じです。
+
+
+やる
+
+やる
+やる
+
+やる
+
+
+
+これで、実行してみると、スクロールができました！
+
+スクロールのたびにcomposeが走るのでちょっとスムーズではないのですが、リリースビルドだと何もわからないレベルで高速スクロールが可能な程度には動きました。
+
+もう一つ別の方針で試したことがあって、これはcomposeは全て渡すけど必要なところ以外はレイアウトしない、というようなことをやってみました。
+
+一応動いたんですがこっちの方が目に見えてカクツクのと、一度レイアウトしたcompseは残るようで、スクロールすればするほど目に見えないcompsoeが増える怖い挙動になるため、やめた方が良さそうです。
+
+3分+コードで1分
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
