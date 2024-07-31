@@ -177,6 +177,7 @@ layout: default
 
 # 時刻の配置
 
+ここは何を作るかの画像を貼る
 
 <!--
 まずは時刻を配置しながら、Layoutの基本を学んでいきます。
@@ -185,18 +186,68 @@ layout: default
 
 さて、まずは要素と並びを確認します。
 
-すごくシンプルで、時刻があって、その時刻が一定の間隔で並びます。
-
 時刻があって、一時間分の間隔でまた時刻がある、それを時刻の分だけ繰り返します。
 
 では、実際のコードを考えていきます。
+-->
 
-まずはお馴染みのComposableでLayout、ここでは一応ユーザーの好きなlabelを渡せるようにしておきます。
+
+---
+layout: default
+---
+
+# First Step
+
+```kotlin
+@ Composable
+fun MyCustomLayout(
+  timeLabel: @Composable (LocalDateTime) -> Unit,
+){
+  // create contents
+  val timeLabels = @Composable {
+      repeat(24) { i ->
+          timeLabel(LocalDateTime.of(now.year, now.month, now.dayOfMonth, i, 0))
+      }
+  }
+  Layout(
+    contents = listOf(
+        timeLabels,
+    ),
+    modifier = Modifier,
+    measurePolicy = { (measureables), constraints ->
+        // 1.Measure all element
+
+        // 2.Set parent size and layout children
+        layout(...
+    }
+  )
+}
+```
+
+<!--
+まずは基本部分からです。
+お馴染みのComposableでこれから作るLayoutのfunを定義します。
+一応時刻の見た目を簡単にカスタマイズできるように引数で時刻表示用のComposableを受け取るようにしています。
+
+
 
 そして、ラベルを時刻分だけ作成し、Layoutに渡します。
 こうすることでこのComposeがLayoutにmeasurableとして入ってくるようになります。（表現として正しいかは微妙です）
 
 widthやheightはpxなので注意する必要があります。
+
+
+```kotlin
+
+fun hoge(){
+  
+}
+val count = ref(0)
+val doubled = computed(() => count.value * 2)
+
+doubled.value = 2
+```
+
 
 ではいよいよLayoutフェーズをゴニョゴニョしていきましょう。
 
