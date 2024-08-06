@@ -940,7 +940,7 @@ layout: default
           eventPlaceablesWithEvent.forEach { (placeable, event) ->
               placeable.place(
                   x = labelMaxWidth,
-                  y = dataTimeYMap[event.startTime.getZeroMinuteLocalDateTime()] ?: 0,
+                  y = dataTimeYMap[event.startTime.getZeroMinuteLocalDateTime()] + event.data.startTime.minute * minuteHeightPx ?: 0,
               )
           }
       }
@@ -949,7 +949,7 @@ layout: default
 
 
 <!--
-あとはStartTimeで時刻のY位置に揃えて配置してやるだけでokです。
+あとはStartTimeで時刻のY位置に合わせて配置してやるだけでokです。
 -->
 ---
 layout: default
@@ -1158,7 +1158,7 @@ layout: default
 
         placeable.place(
             x = labelMaxWidth + (placeable.width * event.group.index),
-            y = dataTimeYMap[event.data.startTime.getZeroMinuteLocalDateTime()] ?: 0,
+            y = dataTimeYMap[event.data.startTime.getZeroMinuteLocalDateTime()] + event.data.startTime.minute * minuteHeightPx ?: 0,
         )
 
 ```
@@ -1221,29 +1221,104 @@ layout: default
 ドラッグでもっと色々な動きを、入れ替えとかするのであれば2の方針も検討する必要がありそうです。
 
 では具体的な実装を見てみましょう。
+-->
 
 
+---
+layout: default
+---
+# Remember draggingItemOffset, Add DragState.
 
-事前準備として、ドラッグしたアイテムのY位置のオフセットを大元のcomposeに持たせます。
- 
-var draggingItemYOffset: Float by remember {  
-    mutableFloatStateOf(0f)  
+``` kt
+// In CustomComponent
+    var draggingItemYOffset: Float by remember {  
+        mutableFloatStateOf(0f)  
+    }
+
+----------------------------
+
+data class WrappedCalendarEvent(
+    val group: Group,
+    val dragState: DragState = DragState.None, // add
+    val data: CalendarEvent
+) {
+    sealed class DragState {
+        data object None : DragState()
+        data class Dragging(
+            val startTime: LocalDateTime,
+            val endTime: LocalDateTime
+        ) : DragState()
+    }
 }
+
+```
+
+<!--
+事前準備として、ドラッグしたアイテムのY位置のオフセットを大元のcomposeに持たせます。
 
 そして、各イベントにはドラッグ状態を表すisDraggingを持たせます。
 
-offsetを各イベントに持たせず大元に持たせるのは、ここの値はdrag中に頻繁に書き換えるため、リストの中のアイテムのパラメータとして持たせると更新に多少コストがかかりそうだと思ったからです。おそらくよほどアイテムの量が多くなければ中に持たせても特に問題はないとは思います。
-逆にdragg中のイベントがどれかという情報を大元にもたせなかったのは、drag中はイベントの色を変えるなど、各イベントcomponentで見た目を変更する際に参照したかったからです。
-// TODO isDragも持たせればいいのでは？
 
-やることは結構簡単で、まず、ebentにDraggableをつけます。
+Drag中かどうかというのと、drag中のDateTimeはイベントの描画に利用したいため各イベントに持たせています。
+offsetの更新はイベントの描画の更新よりも高頻度なため、イベントに持たせると余計にcompositionが走ることになるため別で持たせています。
 
-// TODOcode
+あとは、やることは結構簡単で、まず、ebentにDraggableをつけます。
 
-中身はこんな感じで、ドラッグ開始でドラッグをtrueにする、endでfalseにする。
+-->
+
+
+---
+layout: default
+---
+
+# Draggable
+
+TODO 分ける
+
+``` kt
+            Box(
+                modifier = Modifier
+                    .calenderEventModifier(wrappedEvent)
+                    .draggable(
+                        state = rememberDraggableState { delta ->
+                            draggingItemYOffset += delta
+                        },
+                        onDragStarted = {
+                            wrappedEvents = wrappedEvents.map {
+                                if (it.data == wrappedEvent.data) {
+                                    it.copy(
+                                        dragState = DragState.Dragging( startTime = it.data.startTime,endTime = it.data.endTime)
+                                    )
+                                } else {
+                                    it
+                                }
+                            }
+                        },
+                        onDragStopped = {
+                            draggingItemYOffset = 0f
+                            wrappedEvents = wrappedEvents.map {
+                                if (it.dragState is DragState.Dragging) {
+                                    onFinishDragEvent(it.data, it.dragState)
+                                    it.copy(dragState = DragState.None)
+                                } else {
+                                    it
+                                }
+                            }
+                        },
+                        orientation = Orientation.Vertical
+                    )
+            ) {
+                eventContent(wrappedEvent)
+            }
+
+```
+
+<!--
+
+ドラッグが開始したら対象のイベントのDraggStateをDraggingにして、
+終わったら、Noneにします。
+そのタイミングで、onFinishDragEventを読んでやります。これはCostomLayoutの引数で関数を受け取るようにしておきましょう。
 そして、移動のたびにyOffsetを更新します。
-
-
 
 -->
 
@@ -1260,7 +1335,7 @@ layout: default
             val standardY = dataTimeYMap.getOrDefault(
                 event.data.startTime.getZeroMinuteLocalDateTime(),
                 0
-            )
+            ) + event.data.startTime.minute * minuteHeightPx
             val (y, z) = if (event.dragState is DragState.None) {
                 standardY to 0f
             } else {
@@ -1277,7 +1352,7 @@ layout: default
 
 
 <!--
-そして、Layoutのblockの中でもしtrueだった場合に、offSetぶんずらしてやるようにしていきましょう。
+これでドラッグの状態が取れるので、Layoutのblockの中でもしtrueだった場合に、offSetぶんずらしてやるようにしていきましょう。
 
 これで一応ドラッグができるようになりました。
 
@@ -1289,42 +1364,14 @@ layout: default
 
 TODO:動画
 
-
 <!--
-ここで、一つ大事なことがあります。
 
-移動中にyOffSetが更新し続けられるのですが、これをreadしているところはlayoutのblock内だけなので、理論的にはCompositionのフェーズをスキップしてlayoutとドローのフェイズのみ実行させることができそうですよね。
+ドラッグ中のアイテムの見た目の更新と、ドラッグした後の処理はスナッピングの後にやります。
+
 -->
-
 
 ---
 layout: default
----
-
-TODO:スクショ
-
-
-
-<!--
-ただ、実際にやってみると、こんな感じでドラッグ中に動かしているアイテム以外もcompositionが走ってしまいます。
-
-
-これは、composeにこのListが安定していないとみなされている、skipできていない状態になっています。
-
-そこでですね、こちらの手順を踏んで、Listは安定しているんだと教えてあげると、無事スキップされるようになります。
-
-知らないとそのままにしてしまうところではあるよなあと思ったので是非今日はここだけでも覚えて帰っていただければと思います。
-
-さて、ドラッグの話に戻ります。
-
-あとはですね、isDragを見て、見た目もこんな感じに半透明にするとかやってあげれば完成です。
-
-ドラッグが終わったタイミングで大抵eventの更新をリポジトリなどを通してすることがあるのでonFinishのイベントを発生させる必要があるのですが、それはスナッピングの後に考えてみましょう。
-
--->
-
----
-layout: default-
 ---
 
 
@@ -1336,40 +1383,207 @@ layout: default-
 
 この動きですね。今回は5の倍数の分にスナップしてみます
 
-やることは簡単で、ドラッグ中は単純にoffsetを反映した位置ではなく一番近い5で割れるふんの位置に起くだけです。
+やることは簡単で、ドラッグ中に単純にoffsetを反映した位置ではなく一番近い位置に起くだけです。
 
-なので、まずはgeminiに聞きます
+-->
 
-こんな感じで聞くと
 
-まあロジックを書いてくれるので、あってるかなあっていうのを読んでまああってそうだったので使います。
+---
+layout: default
+---
 
-これで一番近い置き場所がわかるので、あとは、まず時から位置を取ってきて、その後一番近いふんの分だけoffsetを足してやります。
 
-そしてあとはおく。と。
+# Find target minute
 
-これでokです
+```kt
 
-ついでに先ほど実装しなかったドラッグが終わったイベントを発行しましょう。
+private fun findClosestFiveMinute(dateTime: LocalDateTime): Int {
+    val minute = dateTime.minute
+    val tickMinutes = 5
+    val remainder = minute % tickMinutes
+    return if (remainder < tickMinutes / 2 + 1) {
+        minute - remainder
+    } else {
+        minute + (tickMinutes - remainder)
+    }
+}
 
-ドラッグが終わった時に、ドラッグされたイベントが何時何分に移動されたかは、このlayoutblockの中でしかまだわからないので、onDragFinishで使えるように外に値を反映してやる必要があります。
+```
 
-eventItemに持たせるか、親のこんぽーずにもたせるかどっちでもやれるのですが、今回は親のコンポーズに持たせてみます。パフォーマンスの点で少し部があるためです。
 
-というのも、layoutBlockではdragがいつ終わったかは検知できないので、普通にやるとdragのたびにイベントを更新することになり、それによってcompositionが入るため、若干コストがかかります。
-一方、親で持ってその値を使う場合は、readがonFinishのタイミングのみになりますから、ドラッグ中は相変わらずComposeitionが走りません。
+<!--
 
-ということで、やってみます。
+これで一番近い置き場所がわかります。
 
-こんな感じでできそうですが、実際に動かしてみると、値が更新されていません。
+-->
 
-これもCustomLayoutに限らないポイントなんですが、Listenerの中でstateをみている場合はUpdatedStateを使わないと最新の値がつかわれないのでご注意ください。
+---
+layout: default-
+---
 
-ということで、UpdatedStateを使い無事通知されました。
-compositionも走っていませんね。
+# Find target minute
+
+```kt
+    eventPlaceablesWithEvent.forEach { (placeable, event) ->
+        val (y, z) = if (event.dragState is DragState.None) {
+            // not changed .. 
+        } else {
+            val offsetMinute = draggingItemYOffset/(minuteHeightPx.toFloat())
+            val draggingStartTime = event.data.startTime.plusMinutes(offsetMinute.toLong())
+            val targetHourY = dataTimeYMap.getOrDefault(
+                draggingStartTime.getZeroMinuteLocalDateTime(),
+                0
+            )
+            val findClosestFiveMinute = findClosestFiveMinute(draggingStartTime)
+            
+            targetHourY + findClosestFiveMinute*minuteHeightPx to 1f
+        }
+        placeable.place(
+            x = labelMaxWidth + (placeable.width * event.group.index),
+            y = y,
+            zIndex = z,
+        )
+    }
+
+```
+
+
+<!--
+ではこれを使っていきます。
+
+これもCustonoayoutと直接関係ないのでさらっとですが、
+
+offsetから分を探して、時刻を計算して、そこから0分だった場合のyを取ってきて、先ほどのメソッドで見つけた分数だけ高さを加えてあげればOKです。
+-->
+
+
+---
+layout: default-
+---
+
+# Dragging
+
+``` kt
+    eventPlaceablesWithEvent.forEach { (placeable, event) ->
+    .. //
+                        wrappedEvents = wrappedEvents.map {
+                            if (it.data == event.data) {
+                                it.copy(
+                                    dragState = DragState.Dragging(
+                                        startTime = targetStartTime,
+                                        endTime = targetEndTime,
+                                    )
+                                )
+                            } else {
+                                it
+                            }
+                        }
+
+            targetHourY + findClosestFiveMinute*minuteHeightPx to 1f
+            
+             .. //
+
+
+
+```
+
+<!--
+
+ついでにドラッグ中のイベントの見た目が変えられるように、eventが持っているDragg中のstartとendも更新してあげます。
+
+で、これを使ってイベントの見た目を変えるようにしてあげると
+
+-->
+
+---
+layout: default-
+---
+
+# Dragging
+
+TODO完成動画
+
+
+<!--
+ちなみにドラッグ完了したタイミングのonFinishDragEventでListの中身を更新する処理を呼び出し元の方に入れています。
 
 2分
 -->
+
+
+<!--
+ここで、一つちょっとしたパフォーマンスの問題が発生しています。
+
+-->
+
+
+---
+layout: default
+---
+
+# Recomposition?
+
+TODO:動画
+
+
+
+<!--
+こんな感じでドラッグ中に動かしているアイテム以外もcompositionが走ってしまいます。
+
+ドラッグ中に、中身を更新しているのはドラッグ中のeventだけなので、動かしていないイベントはRecompositionが走る必要性がないはずですが、。
+
+これは、LocalDateTimeが安定していないとみなされていることが原因なので。
+
+
+
+-->
+
+
+---
+layout: default
+---
+
+# Stability configuration file
+
+``` kt
+
+// -------  compose_compiler_config.conf
+// Consider LocalDateTime stable
+java.time.LocalDateTime
+
+
+// -------  build.gradle(:app)
+kotlinOptions {
+  freeCompilerArgs += listOf(
+      "-P",
+      "plugin:androidx.compose.compiler.plugins.kotlin:stabilityConfigurationPath=" +
+      "${project.absolutePath}/compose_compiler_config.conf"
+  )
+}
+
+```
+
+https://developer.android.com/develop/ui/compose/performance/stability/fix#kotlin
+
+
+<!--
+
+android developerにあるように、donfファルとbuildGradleにこちらを追加して、LocalDateTimeは安定しているんだと教えてあげると、無事スキップされるようになります。
+
+知らないとそのままにしてしまうところではあるよなあと思ったので是非今日はここだけでも覚えて帰っていただければと思います。
+
+-->
+
+---
+layout: default
+---
+
+# Ok!
+
+TODO：動画
+
+
+
 
 ---
 layout: default
@@ -1380,22 +1594,54 @@ layout: default
 
 <!--
 いよいよ最後に遅延レンダリングです。
-最初に言っておくと、結構力技で無理やりやっているので、流石にもうちょっとマシなやり方あるだろうという感じではあるのですが、参考程度に聞いていただければと思います。
+最初に言っておくと、結構力技で無理やりやっていて、流石にもうちょっとマシなやり方あるだろうという感じなので、参考程度に聞いていただければと思います。
 
 正直デイリーのカレンダーで遅延レンダリングを必要とすることって普通ないとは思うんですが、それだとモチベーションも湧かないので今回は365日分を縦に並べてみようと思います。
 
 単純に365日表示してみると、しっかりアウトオブメモリでクラッシュします。（久しぶりに見た）
 
-これを表示して、スクロールできるように頑張ってみます。
+-->
 
-とりあえず遅延レンダリングといえばLazy系のComposeでしょうということでLayColmunを読んでみたんですが、難しくてよくわからない上に最終的にSubComposeLayoutを使っていました。
 
-確かに、表示しないところはそもそもCoposeを配置しないというのが正しいのでSubComposeLayoutを使うと良さそうではあるのですが、今回はどうしてもLayoutで済ませたいのでLayoutでできないかを考えてみます。
+---
+layout: default
+---
 
-SubComposeLayoutを使う必要があるケースとしてはlayoutフェーズで測定するまでどの要素を配置すべきかが確定しないケースがあります。Lazy系のものはまさにそれで、ユーザーが渡してくるcomposeによってアイテムのサイズが変わるため、何個配置すべきかが測定するまでわからないので、SubComposeLayoutでないと実現が難しそうです。
+# OOM  
+
+TODO スクショ
+
+<!--
+
+これを表示して、スクロールできるようにしたいです。
+
+まずはLayoutでできるのか、ということを考えます。
+
+というのも、LazyColmunとかを見てみると、中はSubcomposeで作られています。
+
+で、今回はどうか、というと、SubComposeLayoutを使う必要があるケースとしてはlayoutフェーズで測定するまでどの要素を配置すべきかが確定しないケースがあります。
+Lazy系のものはまさにそれで、ユーザーが渡してくるcomposeによってアイテムのサイズが変わるため、何個配置すべきかが測定するまでわからないので、SubComposeLayoutでないと実現が難しそうです。
 一方で今回の我々のケースでは、中のアイテムのサイズは時刻と固定値にって計算できるのでLayoutより前に決められます。
-つまり、Layoutでも、必要な分だけComposeを渡すということができそうですね。
-パフォーマンスの懸念はありそうですが、とりあえずやってみます。
+つまり、Layoutでも、必要な分だけComposableを渡すということができそうですね。
+
+
+-->
+
+
+---
+layout: default
+---
+
+# Step
+
+- viewPortから画面に表示できる個数を計算する
+- scrollのoffsetから今表示したいindexを計算する
+- indexと個数から今表示したい時刻を決める
+- 表示する時刻から表示するeventを決める
+- 今まで通りの処理に渡す
+
+
+<!--
 
 手順としては、
 
@@ -1406,26 +1652,182 @@ indexと個数から今表示したい時刻を決める
 今まで通りの処理に渡す
 
 こんな感じです。
+-->
+
+---
+layout: default
+---
+
+# Step
+
+``` kt
+
+    val scrollState = rememberScrollState()
+
+    // viewPortから画面に表示できる個数を計算する
+    val visibleItemCount by remember {
+        derivedStateOf {
+            scrollState.viewportSize / (hourHeightPx) + 12
+        }
+    }
+
+    // scrollのoffsetから今表示したいindexを計算する
+    val visibleItemStartIndex by remember {
+        derivedStateOf {
+            // Align the start position of the Event, so leave some margin in front.
+            max(0, (scrollState.value / hourHeightPx) - 10)
+        }
+    }
+
+```
+
+<!--
+まずは画面に表示できる個数の計算です。
+scrollStateからviewPortのサイズ、Viewの表示サイズが取れるので、それを一時間あたりの高さで割って表示する時刻の数を求めます。
+この12は、前後に余裕を持つためのマージンです。
+
+次に、何番目から表示すればいいかをscrollのオフセットから計算します、scrollStateのvalueからoffsetが取れるので、それを一時間あたりの高さで割ることで求められます。
+
+この10引いているのは、EventをStartTime基準で並べているため、手前にある程度長く余裕を持つためにやっています。
+これは雑な実装なので10時間以上の予定があるとちょっとバグりますが本筋ではないので一旦おいておいています。
+
+-->
 
 
-やる
+---
+layout: default
+---
 
-やる
-やる
+# indexと個数から今表示したい時刻を決める
 
-やる
+``` kt
+    val visibleTimeLabel: Set<LocalDateTime> =
+        remember(visibleItemStartIndex, visibleItemCount) {
+            createShouldShowTimeLabelSet(
+                visibleItemStartIndex,
+                visibleItemCount,
+            )
+        }
+// ----------
+private fun createShouldShowTimeLabelSet(
+    visibleItemStartIndex: Int,
+    viewItemCount: Int,
+): Set<LocalDateTime> {
+    val mutableSet = mutableSetOf<LocalDateTime>()
+    for (i in visibleItemStartIndex..visibleItemStartIndex + viewItemCount) {
+        val dateTime = starTime.plusHours(i.toLong())
+        mutableSet.add(dateTime)
+    }
+    return mutableSet.toSet()
+}
+
+```
+
+<!--
+この二つの値から、表示したい時刻のSetを作ります。
+特に特別なことはないですね。
+
+startのIndexからViewCountの分回して、DateTimeを詰めます。
+
+-->
+
+---
+layout: default
+---
+
+# indexと個数から今表示したい時刻を決める
+
+``` kt
+    var wrappedEvents by remember(events, visibleTimeLabel) {
+        mutableStateOf(
+            groupOverlappingEvents(events).flatMap { group ->
+                group.mapIndexed { index, event ->
+                    // Not considering very long events
+                    if (!visibleTimeLabel.contains(event.startTime.getZeroMinuteLocalDateTime()) &&
+                        !visibleTimeLabel.contains(event.endTime.getZeroMinuteLocalDateTime())
+                    ) {
+                        return@mapIndexed null
+                    }
+                    WrappedCalendarEvent(
+                        group = Group(index = index, size = group.size),
+                        data = event
+                    )
+                }
+            }.filterNotNull()
+        )
+    }
+```
+
+<!-->
+そしてこのsetにstartかendが入っているEventを抽出します。
+
+ここもちょっと雑ですごく長いeventがあったらちょっとバグります。
+
+-->
 
 
+---
+layout: default
+---
 
-これで、実行してみると、スクロールができました！
+# Layout
 
-スクロールのたびにcomposeが走るのでちょっとスムーズではないのですが、リリースビルドだと何もわからないレベルで高速スクロールが可能な程度には動きました。
+``` kt
 
-もう一つ別の方針で試したことがあって、これはcomposeは全て渡すけど必要なところ以外はレイアウトしない、というようなことをやってみました。
+    // val totalHeight = hourHeightPx * timeLabelMeasureables.size
+    val totalHeight = hourHeightPx * timeLabelCount // 24*365
 
-一応動いたんですがこっちの方が目に見えてカクツクのと、一度レイアウトしたcompseは残るようで、スクロールすればするほど目に見えないcompsoeが増える怖い挙動になるため、やめた方が良さそうです。
+// ----------------------
 
-3分+コードで1分
+timeLabelPlacablesWithDataTime.forEachIndexed { index, (placeable, dateTime) ->
+    // val y = hourHeightPx * index
+    val y = hourHeightPx * (index + visibleItemStartIndex)
+
+```
+
+<!--
+あとはLayoutのTotalHeightを表示したい時刻分だけ伸ばすようにして、
+
+TimeLabelのyをstartIndexの分だけずらすようにしてやるだけで完成です。
+
+eventや背景の線は時刻を基準に配置しているのでこれだけで一緒にズレます。
+
+-->
+---
+layout: default
+---
+
+# We can scroll
+<!-->
+
+これで、実行してみると、無事スクロールができました！
+
+-->
+
+
+---
+layout: default
+---
+
+# Recomposition
+
+<!-->
+
+レイアウトインスペクターを見てみると想定通り、このように表示される分だけのラベルとイベントだけが配置されていて、
+一時間分スクロールするたびにRecompositionが走るようになっています。
+
+-->
+
+---
+layout: default
+---
+
+# まとめ
+
+
+<!-->
+
+TODO 考える
 
 -->
 
