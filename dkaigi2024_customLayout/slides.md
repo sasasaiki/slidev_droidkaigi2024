@@ -260,7 +260,7 @@ CostomLayoutを作りたいと思った時は、用途に合わせて選んで�
 
 
 ---
-layout: image
+layout: default
 ---
 
 # Place time label
@@ -270,8 +270,36 @@ layout: image
 <!--
 まずは時刻を配置しながら、Layoutの基本を学んでいきます。
 
-Layoutの使い方に関してはここだけ大体わかるので、ここを一番丁寧にやっていきます。
+-->
 
+---
+layout: default
+---
+
+# Keyword
+  
+- Layout  // TimeLabel
+- Constraints  // TimeLabel 
+- Measurable  // TimeLabel
+- Placeable  // TimeLabel
+- place // TimeLabel 
+- ParentDataModifier
+
+
+<!--
+実はこの時刻の配置だけでこの発表のキーワードの大部分
+ParentDataModifier以外は終わりますので、その分ちょっと長いんですがよろしくお願いします。
+-->
+
+---
+layout: default
+---
+
+# Place time label
+<img src="/time_label_only.png" style="height:450px; margin:0 auto;"/>
+
+
+<!-->
 まずは要素と並びを確認します。
 
 時刻があって、一時間分の間隔でまた時刻がある、それを時刻の分だけ繰り返します。
@@ -644,12 +672,6 @@ layout: default
 
 もし、ラベルにFillMaxHeightをつけていた場合は、一時間分の高さまでは伸びることになります。
 
--->
-
-
-<!-->
-// TODO 比較画像入れてもいいかも
-
 
 測定後の高さはplacedable.heightでpixelで取得できるので、例えばこのラベルと同じサイズの何かを作りたい場合に参照することで実現ができます。
 
@@ -760,8 +782,6 @@ layout: default
 左がlabelにmodifierを指定していない場合、右がFillMaxHeightとpaddingを指定してみた場合です。
 想定通り、1時間の範囲でサイズが決まっているのがわかります。
 
-
-
 では次、に縦軸（横線）の表示
 -->
 
@@ -769,26 +789,16 @@ layout: default
 layout: default
 ---
 
-# 時刻に合わせた縦軸表示
-
-TODO これです画像を貼る
+# Vertical axis display according to time
 
 
----
-layout: default
----
-
-# 時刻に合わせた縦軸表示
-
-TODO これです画像を貼る
-
+<img src="/axis.png" style="height:450px; margin:0 auto;"/>
 
 <!--
 
 これですね。
 
-特に難しいことはないんですが、ポイントが一つだけあります。
-
+特に難しいことはないです。
 
 -->
 
@@ -799,7 +809,6 @@ layout: default
 # Add to contents
 
 ```kt
-
     val backGroundLines = @Composable {
         repeat(timeLabelCount) { i ->
             Box(
@@ -817,7 +826,7 @@ layout: default
 とりあえず、ラベルと同じようにLayoutに渡すcomopsesableを定義しましょう。
 ラベルと同じ個数の横幅いっぱいで高さ1dpの色つきBoxにしてみます。
 
-ここも外から渡せるようにしてもいいですね。
+ここも外から渡せるようにしても良さそうです。
 
 <-->
 
@@ -827,24 +836,22 @@ layout: default
 
 # Add to contents
 
-```kt
+```kt {1-5|1,7-13}
+Layout(
+    contents = listOf(
+        sideBarTimeLabels,
+        backGroundLines
+    ),
+    ..
 
-    Layout(
-        contents = listOf(
-            sideBarTimeLabels,
-            backGroundLines
-        ),
-
-        /* not
-        content = {
-            sideBarTimeLabels()
-            backGroundLines()
-        }
-        */
+    content = {
+        sideBarTimeLabels()
+        backGroundLines()
+    }
+    ..
+    
 
 ```
-
-
 
 <!--
 
@@ -852,7 +859,7 @@ layout: default
 
 ここでワンポイントなんですが、Layout関数にはContentとしてComposableを受け取るものとContentsとしてcomposableのListを受け取るものとがあります。
 
-contentの方でも渡せると言えば渡せるんですが、soうするとmeasureBlockに入ってくるmesurablesがラベルとラインの区別なく全て一つのリストとして入ってくるため使いずらいので、属性の違うcomposableを扱う場合はListで渡す方が使いやすいです。
+contentの方でも渡せると言えば渡せるんですが、そうするとmeasureBlockに入ってくるmesurablesがラベルとラインの区別なく全て一つのリストとして入ってくるため使いずらいので、属性の違うcomposableを扱う場合はListで渡す方が使いやすいです。
 
 -->
 
@@ -863,6 +870,11 @@ layout: default
 
 
 # Add to contents
+
+<br>
+<br>
+<br>
+<br>
 
 ```kt
     { (timeLabelMeasureables, backGroundLinesMeasureables), constraints ->
@@ -898,7 +910,7 @@ layout: default
 
 <!-->
 
-あとは同じようにmeasureして
+あとは先ほどと同じように同じようにmeasureして
 
 <-->
 
@@ -932,7 +944,8 @@ layout: default
 
 <!-->
 
-layoutすれば完成です
+layoutすれば完成です。
+TimeLabelと同じだけ作っているので、雑に時刻ラベルと一緒に同じ位置にplaceしています。
 
 <-->
 
@@ -941,18 +954,20 @@ layoutすれば完成です
 layout: default
 ---
 
-# Line 完成  
+# Compolete 
 
-TODO 画像
+
+<img src="/axis.png" style="height:450px; margin:0 auto;"/>
 
 
 ---
 layout: default
 ---
 
-# 時刻と対応したイベントの配置・サイズの調整  
+# Put Event
 
-TODO: 画像をおく
+<img src="/event.png" style="height:450px; margin:0 auto;"/>
+
 
 <!--
 さて、いよいよイベントを置いていきます。
@@ -979,12 +994,13 @@ data class CalendarEvent(
 ```
 
 <!--
-とりあえず表示に必要な最低限の情報としては
+表示に必要な最低限の情報としては
 start
 end
 のタイムがあれば良いですが、一応idとtitleだけ入れています。
 interfaseとして定義して使う側で拡張できるようにとかいう話もあるんですが今回は割愛します。
 -->
+
 ---
 layout: default
 ---
@@ -996,10 +1012,9 @@ layout: default
 @Composable
 fun DailySchedule(
     modifier: Modifier = Modifier,
+    events: List<CalendarEvent>, // add
     timeLabel: @Composable (LocalDateTime) -> Unit = { StandardTimeLabel(time = it) },
-    // add below.
-    events: List<CalendarEvent>,
-    eventContent: @Composable (CalendarEvent) -> Unit = { EventItem(event = it) },
+    eventContent: @Composable (CalendarEvent) -> Unit = { EventItem(event = it) }, // add
 ) { ...
 
 
@@ -1017,34 +1032,35 @@ layout: default
 
 # Create eventContents
 
-```kt
-
-    val eventContents = @Composable {
-        events.sortedBy { it.startTime }.forEach {
-            Box(modifier = Modifier.calenderEventModifier(it)){
-                eventContent(it)
-            }
+```kt {*|1-8|11-20}
+val eventContents = @Composable {
+    events.sortedBy { it.startTime }.forEach {
+        Box(modifier = Modifier.calenderEventModifier(it)){
+            eventContent(it)
         }
     }
+}
 
+..
+
+Layout(
+    contents = listOf(
+        sideBarTimeLabels,
+        backGroundLines,
+        eventContents // add
+    ),
     ..
 
-    Layout(
-        contents = listOf(
-            sideBarTimeLabels,
-            backGroundLines,
-            eventContents // add
-        ),
-        ..
-
-        { (timeLabelMeasureables, backGroundLinesMeasureables, eventMeasureables /* add */), constraints ->
+    { (timeLabelMeasureables, backGroundLinesMeasureables, eventMeasureables /* add */), constraints ->
 
 
 ```
 
 
 <!--
-イベントのリストから、ebentのcomposeを同じだけ作って渡します。
+イベントのリストから、ebentのcomposeを同じだけ
+
+→ 作って渡します。
 
 これでLayoutの中でサイズを時間の長さに合わせて、開始位置をlabelの位置と合わせればよいのですがここで一つ問題があります。
 ブロックに入ってきたmesurabeはeventの情報を持っていないので、開始時刻と終了時刻を取ってくることができません。
@@ -1053,7 +1069,7 @@ layout: default
 
 
 ---
-layout: default
+layout: section
 ---
 
 # ParentdataModifier
@@ -1071,8 +1087,13 @@ layout: default
 layout: default
 ---
 
-```kt
+# ParentDataModifier
 
+<br>
+<br>
+<br>
+
+```kt {1-5|9-16}
 fun Modifier.calenderEventModifier(event: CalendarEvent) = this.then(
     object : ParentDataModifier {
         override fun Density.modifyParentData(parentData: Any?): Any = event
@@ -1093,9 +1114,11 @@ fun Modifier.calenderEventModifier(event: CalendarEvent) = this.then(
 
 <!--
 
-こんな感じで定義して
+このように、Modifierの拡張カンスうして定義します。
+拡張関数では親に渡したいで－たを受け取り、
+中ではParentDataModifierを継承したオブジェクトを作成し、modifParentDataに受け取ったデータをセットします。
 
-eventのmodifierに追加して親から参照したいデータを渡します。
+あとは、使いたい要素、今回だとeventのmodifierに追加して親から参照したいデータを渡します。
 
 eventContentは中がどういう構造になっているかがわからないので、直接modifierを追加せずにBoxで囲んで追加するのが安全です。
 
@@ -1107,21 +1130,23 @@ layout: default
 
 # Add event
 
+<br>
+<br>
+<br>
+
 ```kt
 
-            val eventPlaceablesWithEvent = eventMeasureables.map { measurable ->
-                val event = measurable.parentData as CalendarEvent
+    val eventPlaceablesWithEvent = eventMeasureables.map { measurable ->
+        val event = measurable.parentData as CalendarEvent
 
 ```
 
 
-
 <!--
 
+こうすると、layoutの中で、mesurable.parentDataとしてCalendarEventを参照することができます。
 
-これで、このようにdataを取ってくることが可能です。
-
-そうすれば、開始と終了が取れますから、あとはその二つから高さを求めて、ラベルの位置に合わせて配置すれば完成です。
+あとは開始と終了から高さを求めて、ラベルの位置に合わせて配置すれば完成です。
 
 -->
 
@@ -1132,7 +1157,6 @@ layout: default
 # Add event
 
 ```kt
-
             val eventPlaceablesWithEvent = eventMeasureables.map { measurable ->
                 val event = measurable.parentData as CalendarEvent
                 val eventDurationMinutes =
@@ -1155,8 +1179,8 @@ layout: default
 <!-->
 
 まず高さを開始と終了時刻から計測します。
-// TODO ここの言い回し
-今回は高さを指定したいので、まずは単純に高さを計算します。
+
+
 幅は、ラベルと被らないようにラベルの分だけ短くしておきます。このlabelMaxWidthはLabelのPlaceableのWidhtから計算したものです。
 
 そしてmaxでもminでもこの高さですよ、と制限を変更して、測定します。
