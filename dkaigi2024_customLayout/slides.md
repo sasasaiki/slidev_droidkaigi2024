@@ -1156,35 +1156,37 @@ layout: default
 
 # Add event
 
-```kt
-            val eventPlaceablesWithEvent = eventMeasureables.map { measurable ->
-                val event = measurable.parentData as CalendarEvent
-                val eventDurationMinutes =
-                    ChronoUnit.MINUTES.between(event.startTime, event.endTime)
-                val eventHeight = (eventDurationMinutes * minuteHeightPx).toInt()
-                val eventWidth = constraints.maxWidth - labelMaxWidth                
-                measurable.measure(
-                    constraints.copy(
-                        minWidth = eventWidth,
-                        maxWidth = eventWidth,
-                        minHeight = eventHeight,
-                        maxHeight = eventHeight
-                    )
-                ) to event
-            }
+```kt {*|2|3-4|3-5|6|7-14}
+val eventPlaceablesWithEvent = eventMeasureables.map { measurable ->
+    val event = measurable.parentData as CalendarEvent
+    val eventDurationMinutes =
+        ChronoUnit.MINUTES.between(event.startTime, event.endTime)
+    val eventHeight = (eventDurationMinutes * minuteHeightPx).toInt()
+    val eventWidth = constraints.maxWidth - labelMaxWidth                
+    measurable.measure(
+        constraints.copy(
+            minWidth = eventWidth,
+            maxWidth = eventWidth,
+            minHeight = eventHeight,
+            maxHeight = eventHeight
+        )
+    ) to event
+}
 
 ```
 
 
 <!-->
 
-まず高さを開始と終了時刻から計測します。
+まずは、先ほどの通りeventをparentDataから取ります。
+そしてeventが何分なのかをstartとendから求めます。
+一分あたりの高さをかけて高さを求めます。
+幅はlabelと重ならないように、一番幅のあるラベル分だけ引いておきます。
+幅は、ラベルと被らないようにラベルの分だけ短くしてお
 
+そして最後にmaxでもminでもこの高さですよ、と制限を変更して、測定します。
 
-幅は、ラベルと被らないようにラベルの分だけ短くしておきます。このlabelMaxWidthはLabelのPlaceableのWidhtから計算したものです。
-
-そしてmaxでもminでもこの高さですよ、と制限を変更して、測定します。
-
+これで、イベントの長さによる高さと、ラベルを避けて収まる幅のplaceableができました。
 -->
 ---
 layout: default
@@ -1192,45 +1194,48 @@ layout: default
 
 # Layout event
 
-```kt
-
-      layout(constraints.maxWidth, totalHeight) {
-          val dataTimeYMap = hashMapOf<LocalDateTime, Int>()
-           timeLabelPlacablesWithDataTime.forEachIndexed { index, (placeable, dateTime) ->
-              val y = hourHeightPx * index
-               placeable.place(
-                  x = 0,
-                  y = y,
-               )
-              linePlaceables[index].place(
-                  x = 0,
-                  y = y,
-              )
-              dataTimeYMap[dateTime] = y
-          }
-
-          eventPlaceablesWithEvent.forEach { (placeable, event) ->
-              placeable.place(
-                  x = labelMaxWidth,
-                  y = dataTimeYMap[event.startTime.getZeroMinuteLocalDateTime()] + event.data.startTime.minute * minuteHeightPx ?: 0,
-              )
-          }
-      }
+```kt {*|2-4,13-14|16-21}
+layout(constraints.maxWidth, totalHeight) {
+    val dataTimeYMap = hashMapOf<LocalDateTime, Int>()
+    timeLabelPlacablesWithDataTime.forEachIndexed { index, (placeable, dateTime) ->
+        val y = hourHeightPx * index
+        placeable.place(
+            x = 0,
+            y = y,
+        )
+        linePlaceables[index].place(
+            x = 0,
+            y = y,
+        )
+        dataTimeYMap[dateTime] = y
+    }
+    eventPlaceablesWithEvent.forEach { (placeable, event) ->
+        placeable.place(
+            x = labelMaxWidth,
+            y = dataTimeYMap[event.startTime.getZeroMinuteLocalDateTime()] 
+                    + event.data.startTime.minute * minuteHeightPx ?: 0,
+        )
+    }
+}
 
 ```
 
 
 <!--
-あとはStartTimeで時刻のY位置に合わせて配置してやるだけでokです。
+最後にLayout関数で配置しますー＞
+タイムラベルのyの位置を基準にしてEventのStartの位置を計算したいので、dateTimeとYのMapを作っておきます。
+→
+そしてStartTimeからラベルのY位置をとってきて、分の分だけずらしてやればokです。。
 -->
+
 ---
 layout: default
 ---
 
 # Add event
 
-// TODO イベント完成
 
+<img src="/event.png" style="height:450px; margin:0 auto;"/>
 
 
 <!--
@@ -1246,12 +1251,15 @@ funga:4
 layout: default
 ---
 
-# 同時刻に複数イベントがあった際の幅の調整
+# Multiple events occur at the same time
 
-// TODO 作るもの
+<img src="/event_overwrap.png" style="height:450px; margin:0 auto;"/>
+
 
 <!--
-次はこういう状態ですね。
+次はこういう状態です。
+
+同じ時間にイベントがあったときに、幅と位置を調整して全て見えるようにします。
 
 -->
 
@@ -1261,21 +1269,21 @@ layout: default
 
 # Step
 
-- 重なりのあるイベントをグルーピング
-- グループのかずに合わせて幅を調整
-- グループ内の位置に合わせてxOffsetを調整
+- Grouping event
+- Adjust width by group count
+- Adjust offset by index
 
 
 <!--
 
+stepとしては、　
 
 - 重なりのあるイベントをグルーピング
 - グループのかずに合わせて幅を調整
-- グループ内の位置に合わせてxOffsetを調整
+- グループ内の何番目かによってxOffsetを調整
 
-一夜サイズを調整するためには重なりのあるイベントを探す必要があるのでまずはグルーピングします。
-
-CustomLayoutあんまり関係ないんで軽くなんですが。
+順にやっていきます。
+位置とサイズを調整するためには重なりのあるイベントを探す必要があるのでまずはグルーピングします。
 
 -->
 
@@ -1292,16 +1300,12 @@ fun groupOverlappingEvents(events: List<CalendarEvent>): List<List<CalendarEvent
     val groupedEvents = mutableListOf<MutableList<CalendarEvent>>()
     var currentGroup = mutableListOf<CalendarEvent>()
     currentGroup.add(sortedEvents[0])
-
     for (i in 1 until sortedEvents.size) {
         val currentEvent = sortedEvents[i]
         val lastEventInGroup = currentGroup.last()
-
         if (currentEvent.startTime < lastEventInGroup.endTime) {
-            // イベントが重なっている場合、現在のグループに追加
             currentGroup.add(currentEvent)
         } else {
-            // 重ならない場合、新しいグループを作成
             groupedEvents.add(currentGroup)
             currentGroup = mutableListOf()
             currentGroup.add(currentEvent)
@@ -1317,18 +1321,16 @@ fun groupOverlappingEvents(events: List<CalendarEvent>): List<List<CalendarEvent
 
 <!--
 
-コード的にはこんな感じで、CostomLayoutと関係ないしgeminiに書いてもらったので解説は省きますが、重なっているものが同じListに入るListのListを作っています。
+コード的にはこんな感じで、CustomLayoutと直接関係ないので説明は省きますが、重なっているものが同じListに入るListのListを作っています。
 
-で、ここで免責事項なのですが、実はこのロジックどうやらバグってまして、複雑なeventの重なりがあった場合うまくいかないケースがあります。
+ちなみにgeminiに書いてもらいました。
 
-ただ、このロジック自体はそこまで重要ではないのと、時間が足りなかったのでそのままぼぐとりきれていない状態になっております。
+実はこのロジックちょっとバグってまして、複雑なeventの重なりがあった場合うまくいかないケースがあるんですが、直しきれなかったので
 
-実装の方針としてはこんな感じなんだなあという感じで見ていただければと思います。
+こういう方針の実装もあるんだなと参考程度に見ていただければと思います。
 
 高さとyの位置を先に計算しておいて、重なりをチェックするみたいな方法も取れそうです。
-
-//TODO この二択は最初に出しとく
-
+もしかしたらそっちの方がうまくいくかもしれません。
 
 -->
 
@@ -1339,8 +1341,7 @@ layout: default
 
 # Add group data to event
 
-``` kt
-
+```kt {*|1-4,12-15}
 data class WrappedCalendarEvent(
     val group: Group,
     val data: CalendarEvent
@@ -1363,9 +1364,11 @@ data class WrappedCalendarEvent(
 
 <!--
 
-そして、レイアウトする際には、自分の幅を決めるために、グループに何個アイテムが存在するかと、位置を決めるために、グループの何番目に存在しているのかを取れるようにしておく必要があるため。
-CalenderEventを一枚ラップして、追加の情報として、Groupを追加してみました。
-ここの構造はお好みで良いですが、ラップする形にしておくと、このカスタムレイアウトを使う側ではラップしていないイベントを渡して利用することができるため、少し便利かと思います。
+そうしましたら、グルーピングしてわかった同じ時刻が含まれるイベントの数と位置をEventに持たせます。
+レイアウトするとき、幅を決めるのとxのoffsetを決めるために必要があるためです。ー＞
+CalenderEventを一枚ラップして、追加の情報として、Groupを追加しています。
+ここの構造はお好みなのですが、ラップする形にしておくと、このカスタムレイアウトを使う側ではラップしていないイベントを渡して利用することができるため、少し便利かと思います。
+
 
 -->
 
@@ -1379,7 +1382,7 @@ layout: default
     val eventContents = @Composable {
         groupOverlappingEvents(events).forEach { group ->
             group.forEachIndexed { index, event ->
-                // Wrapp
+                // Wrap
                 val wrappedEvent = WrappedCalendarEvent(
                     group = Group(index = index, size = group.size),
                     data = event
@@ -1399,15 +1402,11 @@ layout: default
 
 <!--
 
-そして、eventContentsでWrapしてあげます。
+そして、eventContentsを作る際にWrapします。
 
-eventContentはWrappedを受け取るようにしておくと、indexで色を変えたりとかできるようになります。
+eventContentはWrappedEventを受け取るようにしておくことで、indexで色を変えたりとかができるようになります。
 
 これで準備完了です。
-
-ちなみにこれはlayoutのラムダの中でやってもいいように見えますが、そうするとcompositionは走らないがlayoutが走るような場合、次にやるイベントをドラッグしている時とかですね、にも処理が走ってしまって無駄なので、今回のケースではcompositionの方でやっています。
-
-ドラッグに合わせてここの表示も更新する場合はlayoutでやる必要があるかもしれません。
 
 -->
 
@@ -1417,31 +1416,31 @@ layout: default
 
 # Add group data to event
 
-``` kt
-        // calculate with group size
-        val eventWidth = (constraints.maxWidth - labelMaxWidth)  / event.group.size
-        measurable.measure(
-            constraints.copy(
-                minWidth = eventWidth,
-                maxWidth = eventWidth,
-                minHeight = eventHeight,
-                maxHeight = eventHeight
-            )
-        ) to event
+```kt　{*|1-10|15}
+// calculate with group size
+val eventWidth = (constraints.maxWidth - labelMaxWidth)  / event.group.size
+measurable.measure(
+    constraints.copy(
+        minWidth = eventWidth,
+        maxWidth = eventWidth,
+        minHeight = eventHeight,
+        maxHeight = eventHeight
+    )
+) to event
 
 // ---------------------------------- layout
 
-        placeable.place(
-            x = labelMaxWidth + (placeable.width * event.group.index),
-            y = dataTimeYMap[event.data.startTime.getZeroMinuteLocalDateTime()] + event.data.startTime.minute * minuteHeightPx ?: 0,
-        )
+placeable.place(
+    x = labelMaxWidth + (placeable.width * event.group.index),
+    y = dataTimeYMap[event.data.startTime.getZeroMinuteLocalDateTime()] + event.data.startTime.minute * minuteHeightPx ?: 0,
+)
 
 ```
 
 
 <!--
 
-あとは特に特別なことはなくて、幅をsizeで割ってやって、xの座標をindex分だけずらしてやればokです。
+あとは特に特別なことはなくて、->幅をsizeで割ってやって、->xの座標をindex分だけずらしてやればokです。
 
 -->
 
@@ -1452,10 +1451,13 @@ layout: default
 
 # 完成
 
+<img src="/event_overwrap.png" style="height:450px; margin:0 auto;"/>
+
 
 <!--
 
-一応完成です。バグあり
+完成です。
+
 
 funga:2:30
 
@@ -1465,39 +1467,47 @@ funga:2:30
 layout: default
 ---
 
-#  イベントのドラッグ&ドロップ
+# Drag and drop
 
 
-TODO 動画
+<video controls style="height:450px; margin:0 auto;">
+  <source src="/drag2.mov" type="video/mp4" >
+</video>
 
+
+<!-->
+
+つづいてがドラッグ＆ドロップの実装です。
+
+イベントをつまんで動かすこの動きですね。
+
+-->
 
 ---
 layout: default
 ---
 
-#  イベントのドラッグ&ドロップ
-
+# Choices
 
 1. 各イベントアイテムにDraggableをつけてそれぞれでドラッグを管理する
 2. カスタムViewにpointerInputをつけて管理する
 
+<!-->
 
-<!--
-さて、つづいが結構悩ましそうなドラッグ＆ドロップの実装です。
-
-この動きですね。
+TODO:英語
 
 思いつく方針としては、二つありました
 
-1. 各イベントアイテムにDraggableをつけてそれぞれでドラッグを管理する
-2. カスタムViewにpointerInputをつけて管理する
+各イベントアイテムにDraggableをつけてそれぞれでドラッグを管理する
+と
+カスタムViewにpointerInputをつけて管理する
 
+方法です。
 今回は1を選択しました。
-1の方が簡単そうだったからですね。
-2だとドラッグの開始位置からどのイベントをドラッグするのかを計算する必要があってそれがなんとなくめんどくさそうだったためです。
-ドラッグでもっと色々な動きを、入れ替えとかするのであれば2の方針も検討する必要がありそうです。
+2だとドラッグの開始位置からどのイベントをドラッグするのかを計算する必要があってそれがなんとなく難しそうそうだったためです。
+ドラッグでもっと色々な動き、例えば、イベントの入れ替えなどをするのであれば2の方針も検討する必要がありそうです。
 
-では具体的な実装を見てみましょう。
+具体的な実装を見てみましょう。
 -->
 
 
@@ -1506,11 +1516,11 @@ layout: default
 ---
 # Remember draggingItemOffset, Add DragState.
 
-``` kt
+```kt　{1-4|8-21}
 // In CustomComponent
-    var draggingItemYOffset: Float by remember {  
-        mutableFloatStateOf(0f)  
-    }
+var draggingItemYOffset: Float by remember {  
+    mutableFloatStateOf(0f)  
+}
 
 ----------------------------
 
@@ -1519,6 +1529,8 @@ data class WrappedCalendarEvent(
     val dragState: DragState = DragState.None, // add
     val data: CalendarEvent
 ) {
+    ..
+
     sealed class DragState {
         data object None : DragState()
         data class Dragging(
@@ -1535,13 +1547,12 @@ data class WrappedCalendarEvent(
 
 そして、各イベントにはドラッグ状態を表すisDraggingを持たせます。
 
-
 Drag中かどうかというのと、drag中のDateTimeはイベントの描画に利用したいため各イベントに持たせています。
-offsetの更新はイベントの描画の更新よりも高頻度なため、イベントに持たせると余計にcompositionが走ることになるため別で持たせています。
+offsetの更新はイベントの描画の更新よりも高頻度なため、イベントに持たせると余計にcompositionが走ることになるため別で持たせた方が良いです。
 
-あとは、やることは結構簡単で、まず、ebentにDraggableをつけます。
 
 -->
+
 
 
 ---
@@ -1550,54 +1561,105 @@ layout: default
 
 # Draggable
 
-TODO 分ける
-
-``` kt
-            Box(
-                modifier = Modifier
-                    .calenderEventModifier(wrappedEvent)
-                    .draggable(
-                        state = rememberDraggableState { delta ->
-                            draggingItemYOffset += delta
-                        },
-                        onDragStarted = {
-                            wrappedEvents = wrappedEvents.map {
-                                if (it.data == wrappedEvent.data) {
-                                    it.copy(
-                                        dragState = DragState.Dragging( startTime = it.data.startTime,endTime = it.data.endTime)
-                                    )
-                                } else {
-                                    it
-                                }
-                            }
-                        },
-                        onDragStopped = {
-                            draggingItemYOffset = 0f
-                            wrappedEvents = wrappedEvents.map {
-                                if (it.dragState is DragState.Dragging) {
-                                    onFinishDragEvent(it.data, it.dragState)
-                                    it.copy(dragState = DragState.None)
-                                } else {
-                                    it
-                                }
-                            }
-                        },
-                        orientation = Orientation.Vertical
-                    )
-            ) {
-                eventContent(wrappedEvent)
-            }
-
+```kt {*|5-7}
+Box(
+    modifier = Modifier
+        .calenderEventModifier(wrappedEvent)
+        .draggable(
+            state = rememberDraggableState { delta -> 
+                draggingItemYOffset += delta
+            },
+            onDragStarted = { .. },
+            onDragStopped = { .. },
+            orientation = Orientation.Vertical
+        )
+    ) { eventContent(wrappedEvent) }
 ```
 
 <!--
+あとは、やることは結構簡単で、まず、eventのcontentにDraggableをつけます。
+そして、まずsteteにrememberDraggableStateを渡します。
+ここがdrag中に呼ばれるので、offsetYを
 
-ドラッグが開始したら対象のイベントのDraggStateをDraggingにして、
-終わったら、Noneにします。
+-->
+
+---
+layout: default
+---
+
+# Draggable
+
+```kt {*|6-17}
+Box(
+    modifier = Modifier
+        .calenderEventModifier(wrappedEvent)
+        .draggable(
+            state = rememberDraggableState { delta -> /* TODO */ },
+            onDragStarted = {
+                wrappedEvents = wrappedEvents.map {
+                    if (it.data == wrappedEvent.data) {
+                        it.copy(
+                            dragState = DragState.Dragging(
+                                startTime = it.data.startTime,
+                                endTime = it.data.endTime
+                            )
+                        )
+                    } else { it }
+                }
+            },
+            onDragStopped = { /* TODO */},
+            orientation = Orientation.Vertical
+            )
+    ) { eventContent(wrappedEvent) }
+```
+
+<!-->
+
+そしてOnDragStartedでそのeventのDrag状態を更新してやります。
+DragStateが持っているstartTimeとendTimeはドラッグによってズレた結果のstartとendを持たせるためです。
+これはドラッグ中の時刻表じとドラッグ終了時のイベントの更新に使います。
+
+-->
+
+---
+layout: default
+---
+
+# Draggable
+
+```kt {7-17}
+Box(
+    modifier = Modifier
+        .calenderEventModifier(wrappedEvent)
+        .draggable(
+            state = rememberDraggableState { delta -> /* TODO */ },
+            onDragStarted = { .. },
+            onDragStopped = { 
+                draggingItemYOffset = 0f
+                wrappedEvents = wrappedEvents.map {
+                    if (it.dragState is DragState.Dragging) {
+                        onFinishDragEvent(it.data, it.dragState)
+                        it.copy(dragState = DragState.None)
+                    } else {
+                        it
+                    }
+                }                
+            },
+            orientation = Orientation.Vertical
+        )
+    ) { eventContent(wrappedEvent) }
+```
+
+
+<!--
+
+
+onDragEndで、DragStateとyOffsetをを元に戻します。
 そのタイミングで、onFinishDragEventを読んでやります。これはCostomLayoutの引数で関数を受け取るようにしておきましょう。
 そして、移動のたびにyOffsetを更新します。
 
 -->
+
 
 
 ---
