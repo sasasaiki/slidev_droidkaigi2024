@@ -1561,7 +1561,7 @@ layout: default
 
 # Draggable
 
-```kt {*|5-7}
+```kt {*|5-7|10}
 Box(
     modifier = Modifier
         .calenderEventModifier(wrappedEvent)
@@ -1577,9 +1577,10 @@ Box(
 ```
 
 <!--
-あとは、やることは結構簡単で、まず、eventのcontentにDraggableをつけます。
+あとは、やることは結構簡単で、まず、eventのcontentにDraggableをつけます。->
 そして、まずsteteにrememberDraggableStateを渡します。
-ここがdrag中に呼ばれるので、offsetYを
+ここがdrag中に呼ばれるので、入ってくるdeltaでdraggingItemYOffsetを更新しましょう。->
+縦のドラッグなので、orientationはBerticalにしておきます。
 
 -->
 
@@ -1589,7 +1590,7 @@ layout: default
 
 # Draggable
 
-```kt {*|6-17}
+```kt {6-17}
 Box(
     modifier = Modifier
         .calenderEventModifier(wrappedEvent)
@@ -1615,7 +1616,7 @@ Box(
 
 <!-->
 
-そしてOnDragStartedでそのeventのDrag状態を更新してやります。
+そしてOnDragStartedでeventのDragの状態を更新してやります。
 DragStateが持っているstartTimeとendTimeはドラッグによってズレた結果のstartとendを持たせるためです。
 これはドラッグ中の時刻表じとドラッグ終了時のイベントの更新に使います。
 
@@ -1653,10 +1654,8 @@ Box(
 
 <!--
 
-
-onDragEndで、DragStateとyOffsetをを元に戻します。
-そのタイミングで、onFinishDragEventを読んでやります。これはCostomLayoutの引数で関数を受け取るようにしておきましょう。
-そして、移動のたびにyOffsetを更新します。
+最後にonDragEndで、DragStateとyOffsetをを元に戻します。
+そのタイミングで、onFinishDragEventをよんでやります。これはCostomLayoutの引数で関数を受け取るようにしておきましょう。
 
 -->
 
@@ -1668,30 +1667,33 @@ layout: default
 
 # Add OffsetY
 
-``` kt
+```kt　{1,7-11}
+eventPlaceablesWithEvent.forEach { (placeable, event) ->
+    val standardY = dataTimeYMap.getOrDefault(
+        event.data.startTime.getZeroMinuteLocalDateTime(),
+        0
+    ) + event.data.startTime.minute * minuteHeightPx
 
-        eventPlaceablesWithEvent.forEach { (placeable, event) ->
-            val standardY = dataTimeYMap.getOrDefault(
-                event.data.startTime.getZeroMinuteLocalDateTime(),
-                0
-            ) + event.data.startTime.minute * minuteHeightPx
-            val (y, z) = if (event.dragState is DragState.None) {
-                standardY to 0f
-            } else {
-                standardY + draggingItemYOffset.toInt() to 1f
-            }
-            placeable.place(
-                x = labelMaxWidth + (placeable.width * event.group.index),
-                y = y,
-                zIndex = z,
-            )
-        }
+    val (y, z) = if (event.dragState is DragState.None) {
+        standardY to 0f
+    } else {
+        standardY + draggingItemYOffset.toInt() to 1f
+    }
+
+    placeable.place(
+        x = labelMaxWidth + (placeable.width * event.group.index),
+        y = y,
+        zIndex = z,
+    )
+}
 
 ```
 
 
 <!--
-これでドラッグの状態が取れるので、Layoutのblockの中でもしtrueだった場合に、offSetぶんずらしてやるようにしていきましょう。
+これでlayoutのタイミングでドラッグの状態が取れるようになったので、Layoutのblockの中でもしdtag中のイベントだった場合に、offSetぶんずらしてやるようにします。
+offset分だけ足すだけです。
+ついでにzindexも1fにして、常に一番上に描画されるようにしています。
 
 これで一応ドラッグができるようになりました。
 
@@ -1701,10 +1703,15 @@ layout: default
 layout: default
 ---
 
-TODO:動画
+# Drag and drop
+
+<video controls style="height:450px; margin:0 auto;">
+  <source src="/drag2.mov" type="video/mp4" >
+</video>
+
 
 <!--
-
+TODOこのスライドいるか？
 ドラッグ中のアイテムの見た目の更新と、ドラッグした後の処理はスナッピングの後にやります。
 
 funga:2
@@ -1715,13 +1722,17 @@ layout: default
 ---
 
 
-# 時刻へのスナッピング  
+# Snapp to round number
+
+<video controls style="height:450px; margin:0 auto;">
+  <source src="/draging.mov" type="video/mp4" >
+</video>
 
 
 <!--
-次はスナッピングですね。
+次はキリのいい時刻へのスナッピングです。
 
-この動きですね。今回は5の倍数の分にスナップしてみます
+この動きですね。今回は15の倍数の分にスナップしてみます
 
 やることは簡単で、ドラッグ中に単純にoffsetを反映した位置ではなく一番近い位置に起くだけです。
 
@@ -1739,7 +1750,7 @@ layout: default
 
 private fun findClosestFiveMinute(dateTime: LocalDateTime): Int {
     val minute = dateTime.minute
-    val tickMinutes = 5
+    val tickMinutes = 15
     val remainder = minute % tickMinutes
     return if (remainder < tickMinutes / 2 + 1) {
         minute - remainder
@@ -1753,7 +1764,9 @@ private fun findClosestFiveMinute(dateTime: LocalDateTime): Int {
 
 <!--
 
-これで一番近い置き場所がわかります。
+
+とりあえず一番近い霧のいい時刻が求める関数を作成します。
+
 
 -->
 
@@ -1763,27 +1776,27 @@ layout: default
 
 # Find target minute
 
-```kt
-    eventPlaceablesWithEvent.forEach { (placeable, event) ->
-        val (y, z) = if (event.dragState is DragState.None) {
-            // not changed .. 
-        } else {
-            val offsetMinute = draggingItemYOffset/(minuteHeightPx.toFloat())
-            val draggingStartTime = event.data.startTime.plusMinutes(offsetMinute.toLong())
-            val targetHourY = dataTimeYMap.getOrDefault(
-                draggingStartTime.getZeroMinuteLocalDateTime(),
-                0
-            )
-            val findClosestFiveMinute = findClosestFiveMinute(draggingStartTime)
-            
-            targetHourY + findClosestFiveMinute*minuteHeightPx to 1f
-        }
-        placeable.place(
-            x = labelMaxWidth + (placeable.width * event.group.index),
-            y = y,
-            zIndex = z,
+```kt {*|5|6|7-10|11|13|15,17-19}
+eventPlaceablesWithEvent.forEach { (placeable, event) ->
+    val (y, z) = if (event.dragState is DragState.None) {
+        // not changed .. 
+    } else {
+        val offsetMinute = draggingItemYOffset/(minuteHeightPx.toFloat())
+        val draggingStartTime = event.data.startTime.plusMinutes(offsetMinute.toLong())
+        val targetHourY = dataTimeYMap.getOrDefault(
+            draggingStartTime.getZeroMinuteLocalDateTime(),
+            0
         )
+        val findClosestFiveMinute = findClosestFiveMinute(draggingStartTime)
+        
+        targetHourY + findClosestFiveMinute*minuteHeightPx to 1f
     }
+    placeable.place(
+        x = labelMaxWidth + (placeable.width * event.group.index),
+        y = y,
+        zIndex = z,
+    )
+}
 
 ```
 
@@ -1793,7 +1806,8 @@ layout: default
 
 これもCustonoayoutと直接関係ないのでさらっとですが、
 
-offsetから分を探して、時刻を計算して、そこから0分だった場合のyを取ってきて、先ほどのメソッドで見つけた分数だけ高さを加えてあげればOKです。
+offsetから何分分移動しているかを計算して、そこから時刻を計算して、mapから0分だった場合のyを取ってきて、先ほどのメソッドで見つけた一番近くのキリがいい分の分だけ高さを加えてあげればOKです。
+
 -->
 
 
@@ -1804,34 +1818,30 @@ layout: default
 # Dragging
 
 ``` kt
-    eventPlaceablesWithEvent.forEach { (placeable, event) ->
-    .. //
-                        wrappedEvents = wrappedEvents.map {
-                            if (it.data == event.data) {
-                                it.copy(
-                                    dragState = DragState.Dragging(
-                                        startTime = targetStartTime,
-                                        endTime = targetEndTime,
-                                    )
-                                )
-                            } else {
-                                it
-                            }
-                        }
-
-            targetHourY + findClosestFiveMinute*minuteHeightPx to 1f
-            
-             .. //
-
+eventPlaceablesWithEvent.forEach { (placeable, event) ->
+    ..
+        wrappedEvents = wrappedEvents.map {
+            if (it.data == event.data) {
+                it.copy(
+                    dragState = DragState.Dragging(
+                        startTime = targetStartTime,
+                        endTime = targetEndTime,
+                    )
+                )
+            } else {
+                it
+            }
+        }
+.. 
+        targetHourY + findClosestFiveMinute*minuteHeightPx to 1f         
 
 
 ```
 
 <!--
 
-ついでにドラッグ中のイベントの見た目が変えられるように、eventが持っているDragg中のstartとendも更新してあげます。
-
-で、これを使ってイベントの見た目を変えるようにしてあげると
+ドラッグ中のイベントの見た目が変えられるように、同じタイミングでeventが持っているDragg中のstartとendも更新してあげます。
+あとはこれを使ってイベントの見た目を変えるようにしてあげれば完成です。
 
 -->
 
@@ -1841,18 +1851,17 @@ layout: default
 
 # Dragging
 
-TODO完成動画
+
+<video controls style="height:450px; margin:0 auto;">
+  <source src="/draging.mov" type="video/mp4" >
+</video>
 
 
 <!--
-ちなみにドラッグ完了したタイミングのonFinishDragEventでListの中身を更新する処理を呼び出し元の方に入れています。
 
-2分
--->
+ドラッグ完了したタイミングのonFinishDragEventでListの中身を更新する処理は呼び出し元の方に入れていますが特別なことはしていないので割愛します。
 
-
-<!--
-ここで、一つちょっとしたパフォーマンスの問題が発生しています。
+で、ですね、これで一応ドラッグアンドドラッグはできたのですが、実は一つパフォーマンスに関する問題が発生しています。
 
 -->
 
@@ -1863,18 +1872,18 @@ layout: default
 
 # Recomposition?
 
-TODO:動画
 
+<video controls style="height:450px; margin:0 auto;">
+  <source src="/update.mov" type="video/mp4" >
+</video>
 
 
 <!--
-こんな感じでドラッグ中に動かしているアイテム以外もcompositionが走ってしまいます。
+先ほどの動きをLayout Inspectorで見てみると、こんな感じでドラッグ中に動かしているアイテム以外もreCompositionが走っています。
 
-ドラッグ中に、中身を更新しているのはドラッグ中のeventだけなので、動かしていないイベントはRecompositionが走る必要性がないはずですが、。
+ただ、ドラッグ中に中身を更新しているのはドラッグ中のeventだけなので、動かしていないイベントはRecompositionが走る必要性がないはずです。
 
-これは、LocalDateTimeが安定していないとみなされていることが原因なので。
-
-
+これは、LocalDateTimeが安定していないとみなされていことが原因なので、安定してるとみなして、不要なrecompositionをskipできるようにしてあげると解決します。
 
 -->
 
@@ -1908,12 +1917,7 @@ https://developer.android.com/develop/ui/compose/performance/stability/fix#kotli
 
 <!--
 
-android developerにあるように、donfファルとbuildGradleにこちらを追加して、LocalDateTimeは安定しているんだと教えてあげると、無事スキップされるようになります。
-
-知らないとそのままにしてしまうところではあるよなあと思ったので是非今日はここだけでも覚えて帰っていただければと思います。
-
-
-funga:2
+具体的にはandroid developerにあるように、.confファいルに対象のpackage名を、buildGradleこれらのoptionを追加すればokdesu.
 -->
 
 ---
@@ -1922,25 +1926,46 @@ layout: default
 
 # Ok!
 
-TODO：動画
+<video controls style="height:450px; margin:0 auto;">
+  <source src="/drag_notUpdated.mov" type="video/mp4" >
+</video>
 
 
+
+<!-->
+
+これでリビルドすると、このようにドラッグしているアイテム以外のrecompositionは走らずにすみます。
+実際の動きに影響が出ているわけではないので大きな問題ではないのですが、無駄なRecompositionではあるので対応しておいた方が気持ちが良いです。　
+
+<-->
 
 
 ---
-layout: default
+layout: section
 ---
 
-# 遅延Redering  
+# Lazy redering  
 
+---
+layout: section
+---
+
+# ~~Lazy redering~~  
+
+# Scroll smoothly even with a large list.
 
 <!--
-いよいよ最後に遅延レンダリングです。
-最初に言っておくと、結構力技で無理やりやっていて、流石にもうちょっとマシなやり方あるだろうという感じなので、参考程度に聞いていただければと思います。
+最後に遅延レンダリングです。
 
-正直デイリーのカレンダーで遅延レンダリングを必要とすることって普通ないとは思うんですが、それだとモチベーションも湧かないので今回は365日分を縦に並べてみようと思います。
+遅延レンダリングと書いてしまったのですが、やりたいこととしては、方法はさておき、
+カスタムレイアウトが縦、もしくは横に非常に長く、かつアイテムも大量に存在した場合にも、滑らかにスクロールできるようにしたい。
+という話になります。
 
-単純に365日表示してみると、しっかりアウトオブメモリでクラッシュします。（久しぶりに見た）
+かなり語弊のある書き方をしてしまい大変申し訳ありません。
+
+LazyColmunのようなことをやりたい、というとわかりやすいかもしれません。
+
+正直デイリーのカレンダーでこの仕組みを必要とすることって普通ないとは思うんですが、今回はあえて365日分を縦に並べてみようと思います。
 
 -->
 
@@ -1949,23 +1974,32 @@ layout: default
 layout: default
 ---
 
-# OOM  
+# Layout 365 days  
 
-TODO スクショ
+## OOM occured
+
+<br/>
+<br/>
+<br/>
+
+<img src="/oom.png" style="margin:0 auto;"/>
+
 
 <!--
 
-これを表示して、スクロールできるようにしたいです。
+単純にラベルと、イベントを365日分表示してみると、アウトオブメモリでクラッシュしてしまいます。
+
+これを表示して、普通にスクロールできるようにしたいです。
+
+方針としては、画面に表示されている
 
 まずはLayoutでできるのか、ということを考えます。
 
-というのも、LazyColmunとかを見てみると、中はSubcomposeで作られています。
+というのも、LazyColmunとかを見てみると、中はSubcomposeで作られていルようです。
+ユーザーが渡してくるcomposeによってアイテムのサイズが変わるため、何個配置すべきかが測定するまでわからないので、確かにSubComposeLayoutでないと実現が難しそうです。
 
-で、今回はどうか、というと、SubComposeLayoutを使う必要があるケースとしてはlayoutフェーズで測定するまでどの要素を配置すべきかが確定しないケースがあります。
-Lazy系のものはまさにそれで、ユーザーが渡してくるcomposeによってアイテムのサイズが変わるため、何個配置すべきかが測定するまでわからないので、SubComposeLayoutでないと実現が難しそうです。
-一方で今回の我々のケースでは、中のアイテムのサイズは時刻と固定値にって計算できるのでLayoutより前に決められます。
-つまり、Layoutでも、必要な分だけComposableを渡すということができそうですね。
-
+一方で今回の我々のケースはというと、中のアイテムのサイズは時刻と固定値によって計算しているので実はLayoutフェーズより前に決められます。
+なので、画面に表示されるContentを事前に計算して、それだけをLayoutに渡すようにすれば実現ができそうです。
 
 -->
 
@@ -1976,51 +2010,42 @@ layout: default
 
 # Step
 
-- viewPortから画面に表示できる個数を計算する
+- ScrolStateのviewPortから画面に表示できる個数を計算する
 - scrollのoffsetから今表示したいindexを計算する
 - indexと個数から今表示したい時刻を決める
 - 表示する時刻から表示するeventを決める
-- 今まで通りの処理に渡す
+- 今まで通りのLayout処理を行う
 
 
 <!--
-
 手順としては、
 
-viewPortから画面に表示できる個数を計算する
-scrollのoffsetから今表示したいindexを計算する
-indexと個数から今表示したい時刻を決める
-表示する時刻から表示するeventを決める
-今まで通りの処理に渡す
-
-こんな感じです。
+こんな感じです。順にやっていきます。
 -->
 
 ---
 layout: default
 ---
 
-# Step
+# Calculate item count & index
 
-``` kt
+```kt {*|1,3-8,|1,10-16 |}
+val scrollState = rememberScrollState()
 
-    val scrollState = rememberScrollState()
-
-    // viewPortから画面に表示できる個数を計算する
-    val visibleItemCount by remember {
-        derivedStateOf {
-            scrollState.viewportSize / (hourHeightPx) + 12
-        }
+// viewPortから画面に表示できる個数を計算する
+val visibleItemCount by remember {
+    derivedStateOf {
+        scrollState.viewportSize / (hourHeightPx) + 12
     }
+}
 
-    // scrollのoffsetから今表示したいindexを計算する
-    val visibleItemStartIndex by remember {
-        derivedStateOf {
-            // Align the start position of the Event, so leave some margin in front.
-            max(0, (scrollState.value / hourHeightPx) - 10)
-        }
+// scrollのoffsetから今表示したいindexを計算する
+val visibleItemStartIndex by remember {
+    derivedStateOf {
+        // Align the start position of the Event, so leave some margin in front.
+        max(0, (scrollState.value / hourHeightPx) - 10)
     }
-
+}
 ```
 
 <!--
@@ -2040,16 +2065,17 @@ scrollStateからviewPortのサイズ、Viewの表示サイズが取れるので
 layout: default
 ---
 
-# indexと個数から今表示したい時刻を決める
+# Decide time label to show 
 
-``` kt
-    val visibleTimeLabel: Set<LocalDateTime> =
-        remember(visibleItemStartIndex, visibleItemCount) {
-            createShouldShowTimeLabelSet(
-                visibleItemStartIndex,
-                visibleItemCount,
-            )
-        }
+```kt {1-7|9-20}
+val visibleTimeLabel: Set<LocalDateTime> =
+    remember(visibleItemStartIndex, visibleItemCount) {
+        createShouldShowTimeLabelSet(
+            visibleItemStartIndex,
+            visibleItemCount,
+        )
+    }
+
 // ----------
 private fun createShouldShowTimeLabelSet(
     visibleItemStartIndex: Int,
@@ -2067,9 +2093,9 @@ private fun createShouldShowTimeLabelSet(
 
 <!--
 この二つの値から、表示したい時刻のSetを作ります。
-特に特別なことはないですね。
+startIndexからitemCount分のtimeLabelを作っています。
 
-startのIndexからViewCountの分回して、DateTimeを詰めます。
+startのIndexからViewCountの分回して、DateTimeを詰めます。特に特別なことはないです。
 
 -->
 
@@ -2079,31 +2105,31 @@ layout: default
 
 # indexと個数から今表示したい時刻を決める
 
-``` kt
-    var wrappedEvents by remember(events, visibleTimeLabel) {
-        mutableStateOf(
-            groupOverlappingEvents(events).flatMap { group ->
-                group.mapIndexed { index, event ->
-                    // Not considering very long events
-                    if (!visibleTimeLabel.contains(event.startTime.getZeroMinuteLocalDateTime()) &&
-                        !visibleTimeLabel.contains(event.endTime.getZeroMinuteLocalDateTime())
-                    ) {
-                        return@mapIndexed null
-                    }
-                    WrappedCalendarEvent(
-                        group = Group(index = index, size = group.size),
-                        data = event
-                    )
+```kt {*|5-10}
+var wrappedEvents by remember(events, visibleTimeLabel) {
+    mutableStateOf(
+        groupOverlappingEvents(events).flatMap { group ->
+            group.mapIndexed { index, event ->
+                // Not considering very long events
+                if (!visibleTimeLabel.contains(event.startTime.getZeroMinuteLocalDateTime()) &&
+                    !visibleTimeLabel.contains(event.endTime.getZeroMinuteLocalDateTime())
+                ) {
+                    return@mapIndexed null
                 }
-            }.filterNotNull()
-        )
-    }
+                WrappedCalendarEvent(
+                    group = Group(index = index, size = group.size),
+                    data = event
+                )
+            }
+        }.filterNotNull()
+    )
+}
 ```
 
 <!-->
-そしてこのsetにstartかendが入っているEventを抽出します。
+そしてこのsetの中ににstartかendが含まれているEventを抽出します。
 
-ここもちょっと雑ですごく長いeventがあったらちょっとバグります。
+ここなんですが、ちょっとバグが取りきれていなくてすごく長いeventがあったら表示されないんですが、お許しください。
 
 -->
 
@@ -2114,13 +2140,11 @@ layout: default
 
 # Layout
 
-``` kt
-
-    // val totalHeight = hourHeightPx * timeLabelMeasureables.size
-    val totalHeight = hourHeightPx * timeLabelCount // 24*365
+```kt {1-2|5-8}
+// val totalHeight = hourHeightPx * timeLabelMeasureables.size
+val totalHeight = hourHeightPx * timeLabelCount // 24*365
 
 // ----------------------
-
 timeLabelPlacablesWithDataTime.forEachIndexed { index, (placeable, dateTime) ->
     // val y = hourHeightPx * index
     val y = hourHeightPx * (index + visibleItemStartIndex)
@@ -2128,7 +2152,7 @@ timeLabelPlacablesWithDataTime.forEachIndexed { index, (placeable, dateTime) ->
 ```
 
 <!--
-あとはLayoutのTotalHeightを表示したい時刻分だけ伸ばすようにして、
+あとはLayoutのTotalHeightを表示したい時刻の数だけ分だけ伸ばすようにして、今回だと24時間かける365日分ですね。
 
 TimeLabelのyをstartIndexの分だけずらすようにしてやるだけで完成です。
 
@@ -2140,6 +2164,9 @@ layout: default
 ---
 
 # We can scroll
+
+
+
 <!-->
 
 これで、実行してみると、無事スクロールができました！
@@ -2158,8 +2185,6 @@ layout: default
 レイアウトインスペクターを見てみると想定通り、このように表示される分だけのラベルとイベントだけが配置されていて、
 一時間分スクロールするたびにRecompositionが走るようになっています。
 
-funga:3
-
 -->
 
 ---
@@ -2174,21 +2199,3 @@ layout: default
 TODO 考える
 
 -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-26 -> 
-
