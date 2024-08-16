@@ -401,8 +401,6 @@ BoxWithConstraints {
 <!--
 シンプルに、親の制約によってなかの要素を変えたい場合に利用ができます。
 
-まとめるとこのようになります。
-
 -->
 
 
@@ -410,25 +408,24 @@ BoxWithConstraints {
 layout: default
 ---
 
-
-
-
+- Layout()
+    - Layoutフェーズで複数の要素を自由に配置したい
+- modifier.layout()
+    - Layoutフェーズで単一の要素を自由に配置したい
+- subcmposeLayout
+    - Layoutフェーズで配置する要素を選択し、自由に配置したい
+- BoxWithConstraints
+    - 親の制約から配置する要素を選択したい
 
 <!-->
 
+まとめるとこのようになります。
 CostomLayoutを作りたいと思った時は、用途に合わせて選んでみてください。
 
 
-では、今回作るCostomLayoutがどうなのかを確認してみます。
-
-表示する要素としては、
-時刻のラベル。
-背景の線
-カレンダーのイベント
-
-です。
-
-それぞれ位置とサイズの調整はしますが、場合によってcontentを変えることはしないのでLayoutでできそうです。
+では、今回作るCostomLayoutは
+複数の要素があり
+それぞれ位置とサイズの調整はしますが、場合によってcontentを変えることはしないので複数の要素を自由に配置するLayoutが適していそうです。
 
 -->
 
@@ -442,8 +439,9 @@ layout: default
 
 
 <!--
-まずは時刻を配置しながら、Layoutの基本を学んでいきます。
+ではLayoutを使うというのがわかったところで、いよいよ実際にやっていきましょう。
 
+まずは時刻を配置しながら、Layoutの基本を学んでいきます。
 -->
 
 ---
@@ -772,8 +770,6 @@ val placeable = measurable.measure(constraints.copy(
     maxHeight = 100,
 ))
 
-// Crash when constraints.maxHeight is Infinity
-// Please check whether constraints.hasBoundedHeight is true. 
 val placeable = measurable.measure(constraints.copy(
     minHeight = constraints.maxHeight,
     maxHeight = constraints.maxHeight,
@@ -781,15 +777,11 @@ val placeable = measurable.measure(constraints.copy(
 ```
 
 <!-->
-例えば、親のサイズないでcomposable自体のサイズに任せてサイズを決める場合は0,とmaxHeight
-サイズを固定したい場合には、両方に固定の値を入れたり、
-
-とにかく最大まで伸ばしたい場合には両方にmaxを入れるなどといった使い方ができます。
-
-ただし、最大まで伸ばすケースでは、maxがinfinityだった場合にクラッシュしますので、hasBoudedHeightをチェックするなどの処理が必要な場合がありますので注意しましょう。
+例えば、親のサイズないでcomposable自体のサイズに任せてサイズを決める場合はminが0,maxはそのままmaxHeight
+->サイズを固定したい場合には、両方に固定の値を入れたり、
+->とにかく最大まで伸ばしたい場合には両方にmaxを入れるなどといった使い方ができます。
 
 -->
-
 
 ---
 layout: default
@@ -807,9 +799,82 @@ Constraints.fixedHeight(height)
 ```
 
 <!-->
-親の制約に関係なく固定のサイズにしたい場合にはConstraintsにそれ用のメソッドが生えているのでそれを利用することも可能です。
+また、親の制約に関係なく固定のサイズにしたい場合にはConstraintsにそれ用のfixed系のメソッドが生えているのでそれらを利用することも可能です。
+-->
 
-実際にやっていきます。
+---
+layout: default
+---
+# Be careful about crashes 
+
+```kt {*|1-7|9-15|18-19}
+// minHeigh > maxHeight
+val placeable = measurable.measure(constraints.copy(
+    minHeight = 100,
+    maxHeight = 90,
+))
+// error message : 
+// java.lang.IllegalArgumentException: maxHeight(90) must be >= minHeight(100)
+
+// When constraints.maxHeight == infinity
+val placeable = measurable.measure(constraints.copy(
+    minHeight = constraints.maxHeight, 
+    maxHeight = constraints.maxHeight,
+))
+// error message :
+// java.lang.IllegalArgumentException: Can't represent a size of 2147483647 in Constraint 
+
+
+// If min gets Infinity, it will definitely crash.
+// constraints.hasBoundedHeight can be used to check if maxHeight is infinity
+```
+
+<!-->
+ここで注意点がありまして、使い方によってはクラッシュするケースがあります。
+
+まずはminの方がmaxより大きくなってしまった場合にはクラッシュします。
+これは直感的なので普通に直せば良いです。
+
+で、もう一つが、minとmaxにInfinityが入ってしまった場合にもクラッシュします。
+
+こういうmeasureをしているときに、親にverticalScrollがついている場合などです。
+
+親のModifierの状態によってクラッシュしたりしなかったりすることになります。
+
+これらのことから、minにInfinityが入る場合は確実にクラッシュするので、minの方にconstraintsのmaxを入れる場合には特に注意する必要があります。
+
+具体的には、constraintsにmaxはいともしくはwidthがinfinityかどうかをチェックするhasBounded何たらというメソッドが生えているので、それを使って、処理を分岐させることができます
+
+-->
+
+---
+layout: default
+---
+# If maxHeight is infinity 
+
+```kt {1,3-6|2|*}
+// When constraints.maxHeight == infinity
+// measurable　== Text(Modifier = modifier.fillMaxHeight())
+val placeable = measurable.measure(constraints.copy(
+    minHeight = 0, 
+    maxHeight = constraints.maxHeight,
+))
+
+// placeable.height is text height.
+
+```
+
+<!-->
+
+あとこれはおまけなんですが、maxHeightにinfinityが入った時には特にクラッシュしません、
+感覚的には、mesurableのmodifierにMaxHeightが入ってきた時に高さがInfinityになってクラッシュするんじゃないかと思ったんですが、
+確認して見たところ、その場合はmodifierに何もついていない時と同じ挙動、wrapContentのような挙動になり、この例の場合は、単純にテキストの高さになります。
+
+fillMaxをつけているのに最大サイズにならないときは親の制約を気にしてみると良いかもしれません。
+
+
+ではいよいよ実際に使っていきましょう。
+
 -->
 
 ---
@@ -840,8 +905,9 @@ layout: default
 <!-->
 
 事前準備として、一分あたりの高さを2dpとして、そのPxと60をかけた一時間あたりの高さを定義しておきます。
+LayoutPhaseで扱われる数字は基本的にdpではなくpixelです。
 
-また、縦方向にスクロールしたいため親のModifierにverticalScrollをsetします。
+縦方向にスクロールしたいため親のModifierにverticalScrollをつけておきます。
 
 -->
 
@@ -856,11 +922,14 @@ layout: default
 2. Decide own size: Based on these measurements, a node decides on its own size.
 3. Place children: Each child node is placed relative to a node's own position.
 
+<img src="/3step.png" style="height:300px; margin:0 auto;"/>
+
+
 > https://developer.android.com/develop/ui/compose/phases#layout
 
 <!-->
 
-ここでの3stepは、いわゆるcomposeの3つのフェーズで紹介されているLayoutPhaseの3Stepと同様です。
+ここでの3stepは、composeの3つのフェーズで紹介されているLayoutPhaseの3Stepとです。
 
 コヨウソを測定して、親のサイズを決めて、コヨウソを配置します。
 
@@ -902,17 +971,11 @@ layout: default
 
 もし、ラベルにFillMaxHeightをつけていた場合は、一時間分の高さまでは伸びることになります。
 
-
-測定後の高さはplacedable.heightでpixelで取得できるので、例えばこのラベルと同じサイズの何かを作りたい場合に参照することで実現ができます。
+測定後の高さはplacedable.heightで取得できるので、例えばこのラベルと同じサイズの何かを作りたい場合にも参照することで実現ができます。
 
 ちなみにplaceableにはmeasuredHeighというものも生えていて、heightは最終的に表現されるサイズ、mesuredHeightは測定されたサイズで、基本的には一致しているが、場合によっては一致しないらしいので注意が必要です。
 
 いろいろ試したんですが、一致しないケースを再現できなかったので、再現方法がわかる方いたらぜひ教えてください。
-
-では最後、配置していきましょう。
-
-layout関数を使って配置します
-
 -->
 
 ---
@@ -935,16 +998,20 @@ fun layout(
 
 <!--
 
-次に親のサイズの確定と子要素の配置をします。
+次に親のサイズを決め、コヨウソを配置します
 
-layout関数を使います。
+ここでは小文字の方のlayout関数を使います
 
-width height alimentLines placeMentBlockを受け取ります。
+この関数はwidth height alimentLines placeMentBlockを受け取ります。
 
 widthとheightで親のサイズを確定し、placementBlockで小要素を配置します。
 
-// TODO 時間あったら入れる。
-alignmentLinesは使わないケースも多く今回も使わないので割愛します。
+alignmentLinesは使わないケースも多く今回も使わないので軽く紹介するだけなのですが、
+
+alignmentLinesを使うと作成したカスたむレイアウトを利用する別のカスタムレイアウトのレイアウトフェーズに任意の値を渡すことができます。
+
+
+
 
 実際にやっていきましょう。
 
