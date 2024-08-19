@@ -56,9 +56,12 @@ layout: default
 
 # 目次
 
-- What's CustomLayout
-- What do I use?
-- Let's create CustomLayout
+- Leanig Custom layout
+    - What's CustomLayout
+    - Whitch do I use?
+
+- Practice Custom layout
+    - Let's create Daily Scheluer
 
 
 <!--
@@ -101,7 +104,7 @@ layout: section
 
 では、CostomLayoutとは何かという話をしていきます。
 
-カスタムレイアウトの正式な定義は見つからなかったので、少なくとも今日の発表では、
+カスタムレイアウトの正式な定義は見つからなかったのですが、少なくとも今日の発表では、
 
 -->
 
@@ -125,7 +128,7 @@ Compsoeの3つのフェーズ
 
 coposition,layout,draw、のうちのLayoutフェーズを独自で実装したものを指すことにします。
 
-Jetpack Composeが提供する標準のレイアウトコンポーネント Column、Row、Boxなどでは実現できない挙動を実装する時に利用することが多いです。
+Jetpack Composeが提供する標準のレイアウトコンポーネント Column、Row、Boxなどでは実現できない挙動を実装する時に作成することが多いと思います。
 
 -->
 
@@ -142,7 +145,7 @@ https://developer.android.com/develop/ui/compose/layouts/custom?hl=ja
 
 <!-->
 
-公式のAndroidDeveloperのページでもCustomLayoutというタイトルで説明がありますので、こちらも合わせてご覧ください。
+公式のAndroidDeveloperのページでは定義は特に書いてないのですが、Custom layoutというタイトルで説明がありますので、こちらも合わせてご覧ください。
 -->
 
 ---
@@ -153,7 +156,7 @@ layout: section
 
 <!-->
 
-Custom Layoutを作る方法はいくつかあり、今日は主にLayout関数を見ていくのですが、
+さて、Custom Layoutを作る方法はいくつかあり、今日は主にLayout関数を見ていくのですが、
 
 まずは、そのいくつかある方法の中から、どの方法を選ぶのが良いのか、というところから確認していきます。
 
@@ -1751,15 +1754,13 @@ layout: default
 
 # Add group data to event
 
-```kt　{*|1-10|15}
+```kt　{*|1-8|13}
 // calculate with group size
 val eventWidth = (constraints.maxWidth - labelMaxWidth)  / event.group.size
 measurable.measure(
-    constraints.copy(
-        minWidth = eventWidth,
-        maxWidth = eventWidth,
-        minHeight = eventHeight,
-        maxHeight = eventHeight
+    Constraints.fixed(
+        width = eventWidth,
+        height = eventHeight
     )
 ) to event
 
@@ -1880,7 +1881,7 @@ data class WrappedCalendarEvent(
 <!--
 事前準備として、ドラッグしたアイテムのY位置のオフセットを大元のcomposeに持たせます。
 
-そして、各イベントにはドラッグ状態を表すisDraggingを持たせます。
+そして、各イベントにはドラッグ状態を表すdragStateを持たせます。
 
 Drag中かどうかというのと、drag中のDateTimeはイベントの描画に利用したいため各イベントに持たせています。
 offsetの更新はイベントの描画の更新よりも高頻度なため、イベントに持たせると余計にcompositionが走ることになるため別で持たせた方が良いです。
@@ -2067,7 +2068,7 @@ layout: default
 <!--
 次はキリのいい時刻へのスナッピングです。
 
-この動きですね。今回は15の倍数の分にスナップしてみます
+このドラッグしたアイテムがカクカクとする動きですね。今回は15の倍数の分にスナップしてみます
 
 やることは簡単で、ドラッグ中に単純にoffsetを反映した位置ではなく一番近い位置に起くだけです。
 
@@ -2100,7 +2101,8 @@ private fun findClosestFiveMinute(dateTime: LocalDateTime): Int {
 <!--
 
 
-とりあえず一番近い霧のいい時刻が求める関数を作成します。
+まずは一番近い15の倍数の分を取得するメソッドを書きます。
+これはLayoutと直接関係ないので説明は割愛します。
 
 
 -->
@@ -2137,9 +2139,7 @@ eventPlaceablesWithEvent.forEach { (placeable, event) ->
 
 
 <!--
-ではこれを使っていきます。
-
-これもCustonoayoutと直接関係ないのでさらっとですが、
+これを使っていきます。
 
 offsetから何分分移動しているかを計算して、そこから時刻を計算して、mapから0分だった場合のyを取ってきて、先ほどのメソッドで見つけた一番近くのキリがいい分の分だけ高さを加えてあげればOKです。
 
@@ -2300,7 +2300,11 @@ layout: section
 
 LazyColmunのようなことをやりたい、というとわかりやすいかもしれません。
 
-正直デイリーのカレンダーでこの仕組みを必要とすることって普通ないとは思うんですが、今回はあえて365日分を縦に並べてみようと思います。
+これも正直Costom Layoutと直接関係ある話ではないので参考程度に聞いていただけると良いと思います。
+
+（ここで一息）
+
+効果を実感できるように、ここまでに作成したDailySchedulerで365日分の予定をを縦に並べてみます。
 
 -->
 
@@ -2322,11 +2326,9 @@ layout: default
 
 <!--
 
-単純にラベルと、イベントを365日分表示してみると、アウトオブメモリでクラッシュしてしまいます。
+単純にラベルとイベントを365日分表示してみると、アウトオブメモリでクラッシュしてしまいます。
 
 これを表示して、普通にスクロールできるようにしたいです。
-
-方針としては、画面に表示されている
 
 まずはLayoutでできるのか、ということを考えます。
 
@@ -2364,7 +2366,7 @@ layout: default
 
 # Calculate item count & index
 
-```kt {*|1,3-8,|1,10-16 |}
+```kt {*|1,3-8,|1,10-16}
 val scrollState = rememberScrollState()
 
 // viewPortから画面に表示できる個数を計算する
@@ -2386,7 +2388,7 @@ val visibleItemStartIndex by remember {
 <!--
 まずは画面に表示できる個数の計算です。
 scrollStateからviewPortのサイズ、Viewの表示サイズが取れるので、それを一時間あたりの高さで割って表示する時刻の数を求めます。
-この12は、前後に余裕を持つためのマージンです。
+この12は、前後に余裕を持つためのマージンです。->
 
 次に、何番目から表示すればいいかをscrollのオフセットから計算します、scrollStateのvalueからoffsetが取れるので、それを一時間あたりの高さで割ることで求められます。
 
@@ -2522,6 +2524,11 @@ layout: default
 
 <img src="/scroll_inspecter.png" style="height:450px; margin:0 auto;"/>
 
+<!-->
+
+Layout Inspectorを見てみると、必要な分の要素だけが配置されていることがわかります。
+
+-->
 
 ---
 layout: default
@@ -2535,12 +2542,9 @@ layout: default
 
 
 <!-->
-
-レイアウトインスペクターを見てみるとちょっと見にくいですが。表示される分だけのラベルとイベントが配置されています。
 そして一時間分スクロールするたびにRecompositionが走るようになっています。
 
 ということで無事、一通り実装を終えることができました。
-
 
 -->
 
