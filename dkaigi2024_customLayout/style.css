@@ -4,12 +4,18 @@ h1 {
     /* font-size: 60px !important; */
 }
 
+
+li {
+  font-size: 24px !important;
+}
+
+
 :root {
      /* --slidev-code-background: #f5f5f5; */
     /* --slidev-code-foreground: #1b1b1b; */
     /* --slidev-code-font-family: theme('fontFamily.mon o'); */
     /* --slidev-code-padding: 8px; */ 
-    --slidev-code-font-size: 14px;
+    --slidev-code-font-size: 15px;
     /* --slidev-code-line-height: 18px;*/
     /* --slidev-code-radius: 4px; */
     /* --slidev-code-margin: 4px 0; */
