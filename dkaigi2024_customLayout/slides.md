@@ -29,15 +29,18 @@ mdc: true
 
 
 <!--
-TODO サイズ
-始めます、よろしくお願いします。
+それでは始めます、よろしくお願いします。
 -->
 
 ---
-layout: default
+layout: two-cols
 ---
 
 # Self-introduction
+
+::right::
+
+
 
 <!--
 まずは自己紹介をさせていただきます。
@@ -64,7 +67,7 @@ layout: default
 
 
 <!--
-本日のお品書きです。。
+本日のお品書きです。
 今日は、使って知るCustomLayou vs DailyScheulerということで、
 序盤はCostomLayoutってなんだっけっていうのを軽く確認して、
 
@@ -77,12 +80,18 @@ layout: two-cols
 
 # Daily Scheduler
 
-- 時刻に合わせた縦軸表示  
-- 時刻と対応したイベントの配置・サイズの調整  
-- 同時刻に複数イベントがあった際の幅の調整  
-- イベントのドラッグ&ドロップ
-- 時刻へのスナッピング  
-- 遅延Redering  
+## with Layout()
+
+<br/>
+
+- Show time label 
+- Show Vertical axis
+- Show event
+- Adjusting width for overlapping events
+- Drag and drop
+- Snapping events
+- Lazy rendering  
+
 
 ::right::
 
@@ -95,7 +104,7 @@ layout: two-cols
 
 <!-->
 
-その日の予定が表示されて、スクロールができて、イベントをドラッグ＆ドラッグで移動できるようなビューです。
+その日の予定が表示されて、スクロールができて、イベントをドラッグ＆ドロップで移動できるようなビューを、Layout()関数を使って、作っていきます。
 
 -->
 
@@ -104,14 +113,11 @@ layout: section
 ---
 
 ## Today's Goal
-# I feel like I could create a custom layout! 
+# Maybe I can create a custom layout! 
 
 <!--
 
-
-前編入門編となっておりますので、すでにCustomLayoutをバリバリ使っている方には少し優しすぎる内容になっていますのでご了承ください。
-
-ゴールは、カスタムレイアウトを作ったことのない方が、この発表を聞いたことで作れる気がすルようになる事です。
+ゴールは、Layout()関数を使って簡単な　CustomLayout を作れるようになることです。
 
 一息
 
@@ -122,13 +128,15 @@ layout: section
 layout: section
 ---
 
-# What's CustomLayout?
+# What's Custom layout?
+https://developer.android.com/develop/ui/compose/layouts/custom?hl=ja
 
 <!--
-fuga20:ここから
-では早速、CostomLayoutとは何かという話をしていきましょう。
 
-カスタムレイアウトの正式な定義は見つからなかったのですが、少なくとも今日の発表では、
+では早速、CostomLayoutとは何かという話からしていきましょう。
+
+Custom layoutについてはAndroidDevelopersにCustomLayoutというタイトルのページがあるのですが、意外と定義が明文化はされていなかったため、
+とりあえず今日の発表では、このページを参考に、
 
 -->
 
@@ -150,25 +158,10 @@ https://developer.android.com/develop/ui/compose/phases
 
 Compsoeの3つのフェーズ
 
-coposition,layout,draw、のうちの二番目のLayoutフェーズを独自で実装したものを指すことにします。
+coposition,layout,draw、のうちの二番目のLayoutフェーズを独自で実装したComposableのことをCustomLayoutと呼ぼうと思います。
 
-Jetpack Composeが提供する標準のレイアウトコンポーネント Column、Row、Boxなどでは実現できない挙動を実装する時に作成することが多いです。
+Jetpack Composeが提供する標準のレイアウトコンポーネント Column、Row、Boxなどでは実現できない挙動を実装する際に作成することが多いです。
 
--->
-
-
----
-layout: section
----
-
-# Custom layout
-
-https://developer.android.com/develop/ui/compose/layouts/custom?hl=ja
-
-<!-->
-公式のAndroidDeveloperのページでは定義は明確に書いてないのですが、Custom layoutというタイトルで説明があります。
-
-こちらも後で見ていただくとより理解が深まると思います。
 -->
 
 
@@ -179,7 +172,8 @@ layout: section
 # Which method should I choose?
 
 <!-->
-Custom Layoutを作る方法には選択肢がいくつかあります。
+さて、Rowやカラムで実現できないUIを作るために、カスタムレイアウトを作りたい。
+と思った時に、取れる方法にはいくつか選択肢があります。
 まずは、その中から、どの方法を選ぶのが良いのか、というところから確認していきましょう。
 -->
 
@@ -205,11 +199,10 @@ layout: default
 
 ここら辺が上がってきます。
 
-下二つをCustomLayoutと呼ぶかは微妙なのでカッコをつけているのですが、雰囲気としては近いものがあるので合わせて見ていきます。
+BoxWithConstraintsは今回の定義からは外れているのですが、雰囲気としては近いものがあるので合わせて見ていきます。
 
 それぞれがどういった特徴を持っているのかは最初の迷いどころだと思うので、しっかり確認しておきましょう。
 
-fuga20:2:30
 -->
 
 ---
@@ -280,7 +273,7 @@ layout: default
 ### レイアウトフェーズで**複数の要素**の**位置**と**サイズ**をカスタマイズしたい
 
 <!-->
-Layout関数では、当然要素をレイアウトすることが可能です。
+Layout関数では、要素をレイアウトすることが可能です。
 また、複数の子要素、先ほどの例ではTextを三つ渡していましたが、それぞれ個別にレイアウトすることができます。
 親の制約と他の要素のサイズを参照できます。
 なので、複数の要素を渡し、親の制約や、他の要素のサイズを条件に、それぞれの要素のサイズや配置を確定することができます。
@@ -338,7 +331,7 @@ Column(
 
 →Layout関数と大きく区別される点が、modifier.layoutは単一の要素しか扱えないということです。
 ColmunのコンテンツにはTextが二つ入っていますが、Layoutのタイミングではcontentをまとめて一つにした要素しか入ってこないので、
-text1とtext2を両方同じようにずらすといった使い方ができますが、text1は文字幅いっぱいに伸ばして、text2は親の幅いっぱいに伸ばす、というような別々な処理はここではできません。
+text1とtext2を両方同じようにずらすといった使い方はできますが、text1は左にずらして、text2は右にずらす、というような別々な処理はここではできません。
 
 -->
 
@@ -368,7 +361,6 @@ layout: default
 
 
 <!--
-
 なのでmodifier.layoutとLayout関数は、扱いたい子要素が複数なのか一つなのかで選ぶことができます。
 -->
 
@@ -384,8 +376,7 @@ layout: section
 <!-->
 次に、SubComposeLayoutです。
 
-これはLayoutと比べるとより複雑な実装が可能になります。
-
+こちらはLayoutと比べてより複雑な実装が可能にです。
 <-->
 
 ---
@@ -415,7 +406,7 @@ layout: default
 
 親の制約、他の要素のサイズ、位置を見ながら、それぞれの要素のサイズと位置、さらに、何を配置するかまで決めることができます。
 
-SubcompsoeLayoutはその名の通りSubcomopseという仕組みを利用していて、より複雑なので、ここではひとまず、何ができるのかと、Layoutで足りる場合はパフォーマンス的にも可読性的にもLayoutを使った方が良いというところを押さえておきたいと思います。
+SubcompsoeLayoutはその名の通りSubcomopseという仕組みを利用していて、より複雑なので、ここではひとまず、何ができるのかと、Layoutで足りる場合はパフォーマンス的にはLayoutを使った方が良いというところを押さえておきたいです。
 
 -->
 
@@ -431,7 +422,7 @@ layout: section
 
 BoxWithConstraints
 
-です。実はこれは今回のCustomLayoutの定義を外れているのですがLayoutについて調べてると出てくることも多いので合わせて紹介します。
+です。
 
 -->
 
@@ -534,7 +525,7 @@ layout: default
 
 
 <!--
-ではLayoutを使うというのがわかったところで、いよいよ実際にやっていきましょう。
+ではLayoutを使うというのがわかったところで、早速実践に入っていきます。
 
 まずは時刻を配置しながら、Layoutの基本を学んでいきます。
 -->
@@ -605,7 +596,7 @@ fun MyCustomLayout(
 まずは基本部分からです。
 
 これから作るLayoutのfunをComposableで定義します。
-一応時刻の見た目を簡単にカスタマイズできるように引数で時刻表示用のComposableを受け取るようにしています。->
+時刻の見た目を外からカスタマイズできるように引数でtimelabelのComposableを受け取るようにしています。->
 
 ここがLayoutの定義です。
 
@@ -657,7 +648,7 @@ Layout(
 
 <!-->
 ではまずはLayoutに渡すcontent、コヨウソの作成です。->
-今回は一日分なので24回repeatして渡されたcomposableDateTimeを渡して呼び出しています。
+今回は一日分なので24回repeatして渡されたtimeLabel関数にDateTimeを渡して呼び出しています。
 TimeLabelのComponentの中でDateTimeが呼べるので好きに表示することができます。
 
 そして、あとはこれをcontetntとして渡してあげます。
@@ -720,7 +711,7 @@ interface Measurable : IntrinsicMeasurable {
 
 <!--
 measureblesはMeasurableのリストです。
-Measurableはその名の通り、measure関数が定義されたinterfaceで、このメソッドを呼ぶことで、子要素のサイズを測定することが可能です。
+Measurableは、measure関数が定義されたinterfaceで、このメソッドを呼ぶことで、子要素のサイズを測定することが可能です。
 
 -->
 ---
@@ -756,11 +747,11 @@ layout: section
 <!-->
 次にconstraintsです。
 
-コンストラインツはその名の通り、サイズに関する制約です、
+コンストラインツはサイズに関する制約で、
 
 minWidth, minHeight, maxWidth, と maxHeigh
 
-を持っていて、これをmesurableに渡してmeasureを呼ぶことで要素の測定ができます。
+を持っています。これをmesurableに渡すことで、制約の範囲内で測定が行われます。
 
 -->
 
@@ -786,7 +777,7 @@ layout: default
 
 FillMaxSizeのScaffoldにMyCustomLyouatを入れているとして、
 
-Layoutのmodifierに幾つか制約をつけてここで渡されてくるconstraintsをprintしてみます。
+親のmodifierに幾つか制約をつけてここで渡されてくるconstraintsをprintしてみます。
 
 -->
 
@@ -1946,8 +1937,6 @@ Box(
 >
 
 そしてOnDragStartedでeventのDragの状態を更新してやります。
-DragStateが持っているstartTimeとendTimeはドラッグによってズレた結果のstartとendを持たせるためです。
-これはドラッグ中の時刻表じとドラッグ終了時のイベントの更新に使います。
 -->
 
 ---
@@ -2179,7 +2168,7 @@ layout: default
 
 ドラッグ完了したタイミングのonFinishDragEventでListの中身を更新する処理は呼び出し元の方に入れていますが特別なことはしていないので割愛します。
 
-で、ですね、これで一応ドラッグアンドドラッグはできたのですが、実は一つパフォーマンスに関する問題が発生しています。
+で、ですね、これで一応ドラッグアンドドロップはできたのですが、実は一つパフォーマンスに関する問題が発生しています。
 
 -->
 
