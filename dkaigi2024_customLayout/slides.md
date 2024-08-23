@@ -56,7 +56,7 @@ Droidkaigiに関連した話だと、2018年にTDDに関する発表をさせて
 layout: default
 ---
 
-# 目次
+# Table of Contents
 
 - Leanig Custom layout
     - What's CustomLayout?
@@ -492,11 +492,11 @@ layout: default
 # Which method should I choose?
 
 - Layout()
-    - Freely position&size multiple elements during the layout phase.
+    - Freely position&size multiple elements.
 - modifier.layout()
-    - Freely position&size a single element during the layout phase.
+    - Freely position&size a single element.
 - SubcomposeLayout
-    - Choose and freely position&size elements during the layout phase.
+    - Choose and freely position&size elements.
 - BoxWithConstraints
     - Select elements based on the parent’s constraints.
 
