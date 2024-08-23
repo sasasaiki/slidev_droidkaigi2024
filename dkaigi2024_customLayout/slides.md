@@ -257,20 +257,20 @@ layout: default
 
 <br/>
 
-## できること
+## Can
 
 <br/>
 
-- 要素をレイアウトする
-- 複数の子要素を扱う
-- 親の制約を参照する
-- 他の要素のサイズを参照する
+- Layout elements
+- Handle multiple child elements
+- Reference parent constraints
+- Reference the size of other elements
 
 ## Use case
 
 <br/>
 
-### レイアウトフェーズで**複数の要素**の**位置**と**サイズ**をカスタマイズしたい
+### Customize the position and size of mulitiple elements during the layout phase.
 
 <!-->
 Layout関数では、要素をレイアウトすることが可能です。
@@ -344,12 +344,10 @@ layout: default
 
 <br/>
 
-## できる
+## Can<br/>
 
-<br/>
-
-- ただ一つの要素をレイアウトする
-- 親の制約を参照する
+- Handle a single element
+- Reference parent constraints
 
 <br/>
 
@@ -357,7 +355,7 @@ layout: default
 
 <br/>
 
-### レイアウトフェーズで**単一**の要素の**位置**と**サイズ**をカスタマイズしたい
+### Customize the position and size of a single element during the layout phase.
 
 
 <!--
@@ -385,22 +383,21 @@ layout: default
 
 # SubComposeLayout
 
-## できること
+## Can
 
 <br/>
 
-- 要素をレイアウトする
-- 複数の子要素を扱う
-- 親の制約を参照する
-- 他の要素のサイズを参照する
-- **レイアウトフェーズで配置するコンテントを動的に切り替える**
+- Layout elements
+- Handle multiple child elements
+- Reference parent constraints
+- Reference the size of other elements
+- **Dynamically switch content during the layout phase**
 
 ## Use case
 
 <br/>
 
-### レイアウトフェーズで複数の要素の位置とサイズをカスタマイズしたい。場合によってレイアウトする要素自体を変更したい。
-
+### Customize the position and size of multiple elements during the layout phase and change the elements themselves.
 <!--
 具体的には先ほどLayoutでできないといっていた、LayoutフェーズでContentそのものを変更することが可能です。
 
@@ -435,17 +432,17 @@ layout: default
 
 <br/>
 
-## できること
+## Can
 
 <br/>
 
-- 親の制約を参照する
+- Reference parent constraints
 
 ## Use case
 
 <br/>
 
-### 親の制約によってレイアウトする要素を変更したい
+### Change the layout elements based on the parent’s constraints
 
 
 <!-->
@@ -495,13 +492,13 @@ layout: default
 # Which method should I choose?
 
 - Layout()
-    - Layoutフェーズで複数の要素を自由に配置したい
+    - Freely position&size multiple elements during the layout phase.
 - modifier.layout()
-    - Layoutフェーズで単一の要素を自由に配置したい
-- subcmposeLayout
-    - Layoutフェーズで配置する要素を選択し、自由に配置したい
+    - Freely position&size a single element during the layout phase.
+- SubcomposeLayout
+    - Choose and freely position&size elements during the layout phase.
 - BoxWithConstraints
-    - 親の制約から配置する要素を選択したい
+    - Select elements based on the parent’s constraints.
 
 <!-->
 
