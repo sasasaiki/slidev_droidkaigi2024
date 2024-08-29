@@ -58,12 +58,12 @@ layout: default
 
 # Table of Contents
 
-- Leanig Custom layout
+- Learnig Custom layout
     - What's CustomLayout?
     - Which method?
 
 - Practice Custom layout
-    - Let's create Daily Scheluer
+    - vs Daily Scheluer
 
 
 <!--
@@ -71,7 +71,7 @@ layout: default
 今日は、使って知るCustomLayou vs DailyScheulerということで、
 序盤はCostomLayoutってなんだっけっていうのを軽く確認して、
 
-後半では、カレンダーアプリなどにありそうな、1日のスケジュールを表示するViewを作りながら、より理解を深めていきます。
+後半では、vs DailyScheduerですから、DailyScheduerの作成を通してCustomLayoutへの理解をより深めます。
 -->
 
 ---
@@ -104,7 +104,9 @@ layout: two-cols
 
 <!-->
 
-その日の予定が表示されて、スクロールができて、イベントをドラッグ＆ドロップで移動できるようなビューを、Layout()関数を使って、作っていきます。
+DailyScheduerというのはその日の予定が表示されて、スクロールができて、イベントをドラッグ＆ドロップで移動できるようなカレンダーアプリに使われそうなこのビューのことを今回は指しています。
+
+Layout()関数を使って、0から作っていきます。
 
 -->
 
@@ -113,11 +115,11 @@ layout: section
 ---
 
 ## Today's Goal
-# Maybe I can create a custom layout! 
+# I can create a custom layout! 
 
 <!--
 
-ゴールは、Layout()関数を使って簡単な　CustomLayout を作れるようになることです。
+ですので本日のゴールは、聞いてくれた方全員がLayout()関数を使って簡単なCustomLayoutを作れるようになることです。
 
 一息
 
@@ -1359,7 +1361,7 @@ TimeLabelと同じだけ作っているので、雑にタイムラベルと一�
 layout: default
 ---
 
-# Compolete 
+# Complete 
 
 
 <img src="/axis.png" style="height:450px; margin:0 auto;"/>
@@ -2070,7 +2072,7 @@ layout: default
 ---
 
 
-# Snapp to round number
+# Snap to round number
 
 <video autoplay muted style="height:450px; margin:0 auto;">
   <source src="/draging.mov" type="video/mp4" >
@@ -2292,7 +2294,7 @@ fuga20:3:20
 layout: section
 ---
 
-# Lazy redering  
+# Lazy rendering  
 
 <!-->
 
@@ -2387,14 +2389,14 @@ layout: default
 ```kt {*|1,3-8,|1,10-16}
 val scrollState = rememberScrollState()
 
-// viewPortから画面に表示できる個数を計算する
+// Calculate visible items count from viewPort
 val visibleItemCount by remember {
     derivedStateOf {
         scrollState.viewportSize / (hourHeightPx) + 12
     }
 }
 
-// scrollのoffsetから今表示したいindexを計算する
+// Calculate the index to display from the scroll offset
 val visibleItemStartIndex by remember {
     derivedStateOf {
         // Align the start position of the Event, so leave some margin in front.
@@ -2484,7 +2486,7 @@ var wrappedEvents by remember(events, visibleTimeLabel) {
 <!-->
 そしてこのsetの中ににstartかendが含まれているEventを抽出します。
 
-ここなんですが、ちょっとバグが取りきれていなくてすごく長いeventがあったら表示されないんですが、お許しください。
+こちら実はすごく長いeventがあったら表示されないんですが、直す時間がなかったのでそのままいきます。
 
 -->
 
