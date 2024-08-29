@@ -262,27 +262,41 @@ layout: default
 ## Can
 
 <br/>
+<v-clicks>
 
 - Layout elements
 - Handle multiple child elements
 - Reference parent constraints
 - Reference the size of other elements
+</v-clicks>
+
+
+
 
 ## Use case
 
 <br/>
 
+<v-click>
+
 ### Customize the position and size of mulitiple elements during the layout phase.
 
+</v-click>
+
+
 <!-->
-Layout関数では、要素をレイアウトすることが可能です。
-また、複数の子要素、先ほどの例ではTextを三つ渡していましたが、それぞれ個別にレイアウトすることができます。
-親の制約と他の要素のサイズを参照できます。
+Layout関数できることと用途を確認していきましょう。
+Layout関数では、要素をレイアウトすることが可能です。->
+また、複数の子要素、先ほどの例ではTextを三つ渡していましたが、それぞれ個別にレイアウトすることができます。->
+親の制約とを参照できます。 ->
+他の要素のサイズを参照できます。
 なので、複数の要素を渡し、親の制約や、他の要素のサイズを条件に、それぞれの要素のサイズや配置を確定することができます。
 
 ただし、配置するContentそのものを変更することはできません。例えば一つ目の要素の幅が100以上かどうかで残りの要素をテキストにするか、Spacerにするかを動的に変える、ということはできません。
 
-なので、用途としては、レイアウトフェーズで風数の要素の位置とサイズをカスタマイズしたい場合に利用できます
+->
+
+用途としては、レイアウトフェーズで風数の要素の位置とサイズをカスタマイズしたい場合に利用できます
 -->
 
 
@@ -347,9 +361,12 @@ layout: default
 <br/>
 
 ## Can<br/>
+<v-clicks>
 
 - Handle a single element
 - Reference parent constraints
+
+</v-clicks>
 
 <br/>
 
@@ -357,11 +374,21 @@ layout: default
 
 <br/>
 
+<v-clicks>
+
 ### Customize the position and size of a single element during the layout phase.
+
+</v-clicks>
 
 
 <!--
-なのでmodifier.layoutとLayout関数は、扱いたい子要素が複数なのか一つなのかで選ぶことができます。
+できることと、用途としては、->
+ただ一つの要素をlayoutすることができます。→
+そして、親の制約を参照することができます。→
+
+用途としては、レイアウトフェーズで単一の要素の位置とサイズをカスタマイズしたい場合に利用できます
+
+つまり、modifier.layoutとLayout関数は、扱いたい子要素が複数なのか一つなのかで選ぶことができます。
 -->
 
 
@@ -389,21 +416,41 @@ layout: default
 
 <br/>
 
+<v-click>
+
 - Layout elements
 - Handle multiple child elements
 - Reference parent constraints
 - Reference the size of other elements
+
+</v-click>
+
+
+<v-click>
+
 - **Dynamically switch content during the layout phase**
+
+</v-click>
+
 
 ## Use case
 
 <br/>
 
-### Customize the position and size of multiple elements during the layout phase and change the elements themselves.
-<!--
-具体的には先ほどLayoutでできないといっていた、LayoutフェーズでContentそのものを変更することが可能です。
 
-親の制約、他の要素のサイズ、位置を見ながら、それぞれの要素のサイズと位置、さらに、何を配置するかまで決めることができます。
+<v-click>
+
+### Customize the position and size of multiple elements during the layout phase and change the elements themselves.
+
+</v-click>
+
+
+<!--
+SubComopseLayoutは、Layout関数にできたことは→全てできます。
+
+そこに追加で、先ほどLayoutでできないといっていた、→ LayoutフェーズでContentそのものを変更することが可能になります。
+
+親の制約、他の要素のサイズ、位置を見ながら、それぞれの要素のサイズと位置、さらに、何を配置するかまで決めることができるのでLayout関数に加えて何を配置するかまで変えたい場合にはSubCopmoseLayoutを使う必要があります。
 
 SubcompsoeLayoutはその名の通りSubcomopseという仕組みを利用していて、より複雑なので、ここではひとまず、何ができるのかと、Layoutで足りる場合はパフォーマンス的にはLayoutを使った方が良いというところを押さえておきたいです。
 
@@ -438,19 +485,27 @@ layout: default
 
 <br/>
 
+
+<v-click>
+
 - Reference parent constraints
+
+</v-click>
+
 
 ## Use case
 
 <br/>
+<v-click>
 
 ### Change the layout elements based on the parent’s constraints
+</v-click>
 
 
 <!-->
 BoxWithConstraintsは、親の制約から、配置するコンテンツを変えることができるBoxです。
 
-親のmaxやminが取れるのでそれを使って、中のComposableを変更することができます。
+親のmaxやminが取れるのでそれを使って、中のComposableを変更することができます。-> 
 
 逆に、それ以外はできないので、サイズや、配置は、通常のBoxの挙動に任せることになります。
 
@@ -486,7 +541,6 @@ BoxWithConstraints {
 他の方法だった場合親の制約から取れる値はピクセルなのですがboxWithconstraintの場合はdpに変換された状態で取れるのでとてもお手軽です。
 -->
 
-
 ---
 layout: default
 ---
@@ -502,18 +556,96 @@ layout: default
 - BoxWithConstraints
     - Select elements based on the parent’s constraints.
 
-<!-->
+<!--
+ここまでで、それぞれができることと用途を確認できました。まとめるとこのようになります。
 
-まとめるとこのようになります。
-CostomLayoutを作りたいと思った時は、用途に合わせて選んでみてください。
+これだけだとまだいまいち選び方がわからないなあという方のためにですね、
+-->
+
+
+
+---
+layout: center
+---
+
+# Which method should I choose?
+
+```mermaid {scale: 0.9}
+graph TD
+B(start) --> C[customize layout phase?]
+C -->|Yes| E[change content in layout pahse?]
+C -->|No| D(BoxWithConstraints or other component)
+E -->|Yes| F(SubcomposeLayout)
+E -->|No| G[handle multiple content?]
+G -->|Yes| I(Layout)
+G -->|No| H(Modifier.layout)
+```
+
+
+<!-->
+フローチャート用意してきました。
+
+菱形だと場所とるので全て死角になっているのですが、カスタムレイアウトを作りたいな、と思った時にはこの図に従えば恐らく適当なメソッドが選べると思います。
+
+まずは、Layout Phaseをカスタマイズする必要があるかを考えます。
+
+その必要がなければ、BoxWithConstrainntか他の基本的なcomponentで作れる可能性があります。
+
+次にlayoutPhaseで、親の制約や、他の子要素のサイズによって、ハイ値するコンテンツを変える必要があるかどうかを考えます。
+これが必要なら、SubcommposeLayoutを使う必要があります。
+
+最後に、複数の要素を扱うかを考えます。
+
+これがyesであればLayout関数、noならばModifier.layoutです。
 
 では、今回作るDailySchedulerはというと、
 ラベル、イベントなど複数の要素があり、
 それぞれ位置とサイズの調整はしますが、場合によってcontentを変えることはしないので複数の要素を自由に配置するLayoutを使うことができます。
 
-fuga20:6:20
 -->
 
+
+---
+layout: section
+---
+
+# vs Daily Scheduler
+
+
+
+---
+layout: two-cols
+---
+
+# Daily Scheduler
+
+## with Layout()
+
+<br/>
+
+- Show time label 
+- Show Vertical axis
+- Show event
+- Adjusting width for overlapping events
+- Drag and drop
+- Snapping events
+- Lazy rendering  
+
+
+::right::
+
+<br/>
+<br/>
+
+<video autoplay muted style="height:400px; margin:0 auto;">
+  <source src="/first.mov" type="video/mp4" >
+</video>
+
+<!-->
+
+ということで、
+
+-->
 
 ---
 layout: default
@@ -912,7 +1044,7 @@ layout: default
 ---
 # Be careful about crashes 
 
-```kt {*|1-7|9-15|18-19}
+```kt {*|1-7|9-15}
 // minHeigh > maxHeight
 val placeable = measurable.measure(constraints.copy(
     minHeight = 100,
@@ -929,9 +1061,6 @@ val placeable = measurable.measure(constraints.copy(
 // error message :
 // java.lang.IllegalArgumentException: Can't represent a size of 2147483647 in Constraint 
 
-
-If min gets Infinity, it will definitely crash.
-constraints.hasBoundedHeight can be used to check if minHeight is infinity
 ```
 
 <!-->
@@ -945,6 +1074,21 @@ constraints.hasBoundedHeight can be used to check if minHeight is infinity
 こういうmeasureをしていて、親にverticalScrollがついている場合などです。
 
 つまり、minにInfinityが入る場合はクラッシュするので、minの方にconstraintsのmaxを入れる場合には特に注意する必要があります。->
+
+-->
+
+
+---
+layout: section
+---
+## You can use 
+# constraints.hasBoundedHeight() 
+
+## to check if minHeight is infinity
+
+## ( also width ) 
+
+<!-->
 
 具体的には、constraintsにmaxはいともしくはwidthがinfinityかどうかをチェックするhasBounded何たらというメソッドが生えているので、それを使って、処理を分岐させることができます
 
