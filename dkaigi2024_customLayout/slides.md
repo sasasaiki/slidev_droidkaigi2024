@@ -326,7 +326,7 @@ Column(
         horizontalAlignment = androidx.compose.ui.Alignment.End,
         modifier = modifier
             .layout { measurable, constraints ->
-                // do anything
+                // do something
             }
     ) {
         Text(
@@ -397,20 +397,50 @@ layout: default
 layout: section
 ---
 
-# SubComposeLayout
+# SubcomposeLayout
 
 
 <!-->
-次に、SubComposeLayoutです。
+次に、SubcomposeLayoutです。
 
 こちらはLayoutと比べてより複雑な実装が可能にです。
 <-->
+
+
 
 ---
 layout: default
 ---
 
-# SubComposeLayout
+# SubcomposeLayout
+
+```kt {*|2-4}
+SubcomposeLayout { constraints ->
+    // It's a special one!
+    val childPlaceables = Subcompose(Slots.Children, children)
+        .map { it.measure(constraints) }
+    
+    layout(layoutWidth, layoutHeight) {
+        // layout
+    }
+}
+```
+
+<!-->
+
+今回は詳細な説明は避けるのですが、使い方としては、Layout関数だった場合に必要な処理に加えて、->
+このSubcomposeというメソッドで、人のcoposableのcompositionを行いmesurableを作成することができます。
+
+これだけだと若干わかりにくいと思うのですが、つまるところ、
+
+<-->
+
+
+---
+layout: default
+---
+
+# SubcomposeLayout
 
 ## Can
 
@@ -633,7 +663,7 @@ G -->|No| H(Modifier.layout)
 今回、カレンダーのイベントは全て同じこの四角いComposableで表現して、位置とサイズのみの調整で済ませます。
 
 なのでここはno、で右に行きます。
-これがyesだった場合はSubComposelayoutを使わないと実現できません。
+これがyesだった場合はSubcomposelayoutを使わないと実現できません。
 
 最後に、複数のコンテンツを扱うかです。
 
@@ -691,44 +721,25 @@ layout: two-cols
 
 では、Layout()で作れば良い、というのがわかったところで実際に作りながら、Layoutの使い方をおさえていきたいと思います。
 
-もう一度作るものの確認をしておきましょう。→
+もう一度作るものの確認をしておきましょう
 
 今右側に見えている、1日のスケジュールを表示するUIを作っていきます。
 
+実装する機能としては→
+TimeLabel、左側にある時刻のラベルです→
 
+横線　ラベルの上にある横線ですー＞
 
--->
+次にメインの予定を表現イベントと表示して→
+時間が重なっているイベントが完全に重なってしまわないように幅を調整します→
+イベントをドラッグ&ドロップで移動できるようにし→
+その際に霧のいい時刻、今回は15分刻みで移動されるようにし→
+最後に縦に非常に長くし、大量にイベントがあった場合に滑らかにスクロールできるように工夫をしていきますl
 
----
-layout: default
----
+このうちのShowEventくらいまでが、CustomLayoutの使い方の主な説明となりまして、そこより後ろは、CustomLayout自体の説明はほぼないので、参考実装といった気持ちで見ていただければと思います。
 
-# Place time label
-<img src="/time_label_only.png" style="height:450px; margin:0 auto;"/>
+では、やっていきましょう、まずはTmeLabelの配置です
 
-
-<!--
-ではLayoutを使うというのがわかったところで、早速実践に入っていきます。
-
-まずはTimelabelを配置しながら、Layoutの基本を学んでいきます。
--->
-
----
-layout: default
----
-
-# Keyword
-  
-- Layout  // TimeLabel
-- Constraints  // TimeLabel 
-- Measurable  // TimeLabel
-- Placeable  // TimeLabel
-- place // TimeLabel 
-- ParentDataModifier
-
-
-<!--
-実はこのTimeLabelの配置だけでこの発表の大事な部分の説明がほぼほぼ入っているので、やることは単純な割に結構長くなります、ご注意ください。
 -->
 
 ---
@@ -740,7 +751,9 @@ layout: default
 
 
 <!-->
-では要素と並びを確認します。
+実はこのTimeLabelの配置だけでこの発表の大事な部分の説明がほぼほぼ入っているので、やることは単純な割に結構長くなります、ご注意ください。
+
+まず要素と並びを確認します。
 
 タイムラベルがあって、一時間分の間隔でまたタイムラベルががある、それを必要なだけ繰り返します。
 
