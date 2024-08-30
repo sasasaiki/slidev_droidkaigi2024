@@ -67,9 +67,8 @@ X
 改めまして、飯島 彩輝と申します。
 現在は株式会社UNEXTにてUnextという動画配信サービスのAndroid端末やFireTablet向けのAndroidアプリの開発をしております。
 
-社内外問わず、このご飯のアイコンで活動しています。手作りです。
-
-
+社内外問わず、このご飯のアイコンで活動しています。今日はぜひこのアイコンだけでも覚えて帰っていただければと思います。
+手作りです。
 
 Droidkaigiに関連した話だと、2018年にTDDに関する発表をさせていただいて、2021年にはdroidNinjaに記事を投稿させていただいたりしておりまして、今回はかなり久々の登壇者としての参加となります。
 
@@ -94,7 +93,7 @@ layout: default
 今日は、使って知るCustomLayou vs DailyScheulerということで、
 序盤はCostomLayoutってなんだっけっていうのを軽く確認して、
 
-後半では、vs DailyScheduerですから、DailyScheduerの作成を通してCustomLayoutへの理解をより深めます。
+後半では、vs DailyScheduerということなので、DailyScheduerの作成を通してCustomLayoutへの理解をより深めます。
 -->
 
 ---
@@ -129,7 +128,9 @@ layout: two-cols
 
 DailyScheduerというのはその日の予定が表示されて、スクロールができて、イベントをドラッグ＆ドロップで移動できるようなカレンダーアプリに使われそうなこのビューのことを今回は指しています。
 
-Layout()関数を使って、0から作っていきます。
+Layout関数を使って、0から作っていきます。詳細は後半に再度説明します。
+
+一息
 
 -->
 
@@ -142,7 +143,7 @@ layout: section
 
 <!--
 
-ですので本日のゴールは、聞いてくれた方全員がLayout()関数を使って簡単なCustomLayoutを作れるようになることです。
+本日のゴールは、聞いてくださった皆様がLayout()関数を使って簡単なCustomLayoutを作れるようになることです。
 
 一息
 
@@ -160,8 +161,8 @@ https://developer.android.com/develop/ui/compose/layouts/custom?hl=ja
 
 では早速、CostomLayoutとは何かという話からしていきましょう。
 
-Custom layoutについてはAndroidDevelopersにCustomLayoutというタイトルのページがあるのですが、意外と定義が明文化はされていなかったため、
-とりあえず今日の発表では、このページを参考に、
+Custom layoutについてはAndroidDevelopersにCustomLayoutというタイトルのページがあるのですが、定義が明文化はされていなかったため、
+今日の発表では、このページを参考に、
 
 -->
 
@@ -217,16 +218,14 @@ layout: default
 <!--
 選択肢としては、
 
-- Layout()
-- modifier.layout()
-- subcmposeLayout()
-- BoxWithConstraints
+Layout
+modifier.layout
+subcmposeLayout
+BoxWithConstraints
 
 ここら辺が上がってきます。
 
-BoxWithConstraintsは今回の定義からは外れているのですが、雰囲気としては近いものがあるので合わせて見ていきます。
-
-それぞれがどういった特徴を持っているのかは最初の迷いどころだと思うので、しっかり確認しておきましょう。
+BoxWithConstraintsは今回の定義からは外れているのですが、近いものがあるので合わせて見ていきます。
 
 -->
 
@@ -308,7 +307,6 @@ layout: default
 
 
 <!-->
-Layout関数できることと用途を確認していきましょう。
 Layout関数では、要素をレイアウトすることが可能です。->
 また、複数の子要素、先ほどの例ではTextを三つ渡していましたが、それぞれ個別にレイアウトすることができます。->
 親の制約とを参照できます。 ->
@@ -316,8 +314,6 @@ Layout関数では、要素をレイアウトすることが可能です。->
 なので、複数の要素を渡し、親の制約や、他の要素のサイズを条件に、それぞれの要素のサイズや配置を確定することができます。
 
 ただし、配置するContentそのものを変更することはできません。例えば一つ目の要素の幅が100以上かどうかで残りの要素をテキストにするか、Spacerにするかを動的に変える、ということはできません。
-
-->
 
 用途としては、レイアウトフェーズで風数の要素の位置とサイズをカスタマイズしたい場合に利用できます
 -->
@@ -368,9 +364,9 @@ Column(
 
 （一息）
 
-→Layout関数と大きく区別される点が、modifier.layoutは単一の要素しか扱えないということです。
+→Layout関数と大きく区別される点が、こちらは単一の要素しか扱えないということです。
 ColmunのコンテンツにはTextが二つ入っていますが、Layoutのタイミングではcontentをまとめて一つにした要素しか入ってこないので、
-text1とtext2を両方同じようにずらすといった使い方はできますが、text1は左にずらして、text2は右にずらす、というような別々な処理はここではできません。
+text1とtext2を両方同じようにずらすといった使い方はできますが、それぞれを別の方向にずらすというような別々の処理はここではできません。
 
 -->
 
@@ -410,8 +406,6 @@ layout: default
 そして、親の制約を参照することができます。→
 
 用途としては、レイアウトフェーズで単一の要素の位置とサイズをカスタマイズしたい場合に利用できます
-
-つまり、modifier.layoutとLayout関数は、扱いたい子要素が複数なのか一つなのかで選ぶことができます。
 -->
 
 
@@ -426,7 +420,7 @@ layout: section
 <!-->
 次に、SubcomposeLayoutです。
 
-こちらはLayoutと比べてより複雑な実装が可能にです。
+こちらはLayoutと比べてより複雑な実装が可能です。
 <-->
 
 
@@ -451,10 +445,10 @@ SubcomposeLayout { constraints ->
 
 <!-->
 
-今回は詳細な説明は避けるのですが、使い方としては、Layout関数だった場合に必要な処理に加えて、->
-このSubcomposeというメソッドで、人のcoposableのcompositionを行いmesurableを作成することができます。
+今回は詳細な説明は避けるのですが、使い方としては、Layout関数でも必要な処理に加えて、->
+このSubcomposeというメソッドで、coposableのcompositionを行いmesurableを作成することができます。
 
-これだけだと若干わかりにくいと思うのですが、つまるところ、
+つまり、
 
 <-->
 
@@ -503,9 +497,7 @@ SubComopseLayoutは、Layout関数にできたことは→全てできます。
 
 そこに追加で、先ほどLayoutでできないといっていた、→ LayoutフェーズでContentそのものを変更することが可能になります。
 
-親の制約、他の要素のサイズ、位置を見ながら、それぞれの要素のサイズと位置、さらに、何を配置するかまで決めることができるのでLayout関数に加えて何を配置するかまで変えたい場合にはSubCopmoseLayoutを使う必要があります。
-
-SubcompsoeLayoutはその名の通りSubcomopseという仕組みを利用していて、より複雑なので、ここではひとまず、何ができるのかと、Layoutで足りる場合はパフォーマンス的にはLayoutを使った方が良いというところを押さえておきたいです。
+→親の制約、他の要素のサイズ、位置を見ながら、それぞれの要素のサイズと位置、さらに、何を配置するかまで決めることができるのでLayout関数に加えて何を配置するかまで変えたい場合にはSubCopmoseLayoutを使う必要があります。
 
 -->
 
@@ -523,46 +515,10 @@ BoxWithConstraints
 
 です。
 
--->
-
-
----
-layout: default
----
-
-# BoxWithConstraints
-
-<br/>
-
-## Can
-
-<br/>
-
-
-<v-click>
-
-- Reference parent constraints
-
-</v-click>
-
-
-## Use case
-
-<br/>
-<v-click>
-
-### Change the layout elements based on the parent’s constraints
-</v-click>
-
-
-<!-->
-BoxWithConstraintsは、親の制約から、配置するコンテンツを変えることができるBoxです。
-
-親のmaxやminが取れるのでそれを使って、中のComposableを変更することができます。-> 
-
-逆に、それ以外はできないので、サイズや、配置は、通常のBoxの挙動に任せることになります。
+BoxWithConstraintsは、親の制約を参照できるボックスです。
 
 -->
+
 
 ---
 layout: default
@@ -589,9 +545,50 @@ BoxWithConstraints {
 ```
 
 <!--
-これは親のmaxWidthが600.dpより大きいか小さいかで、表示するComposableを絡むか、ろうにだし分けています。
+例えば、これは親のmaxWidthが600.dpより大きいか小さいかで、表示するComposableを絡むか、ろうにだし分けています。
 
 他の方法だった場合親の制約から取れる値はピクセルなのですがboxWithconstraintの場合はdpに変換された状態で取れるのでとてもお手軽です。
+-->
+
+---
+layout: default
+---
+
+# BoxWithConstraints
+
+<br/>
+
+## Can
+
+<br/>
+
+
+<v-click>
+
+- Reference parent constraints
+- Switch content
+
+</v-click>
+
+
+## Use case
+
+<br/>
+<v-click>
+
+### Change the layout elements based on the parent’s constraints
+</v-click>
+
+
+<!-->
+つまり、
+BoxWithConstraintsは、親の制約を参照できます。
+そして、->中のComposableを変更することができます。
+
+逆に、それ以外はできないので、サイズや、配置は、通常のBoxの挙動に任せることになります。
+
+→親の制約によって、中のComposableを変えたい場合に利用できます。
+
 -->
 
 ---
@@ -677,24 +674,20 @@ G -->|No| H(Modifier.layout)
 まずはLayoutPhaseをカスタマイズする必要があるか、を考えます。
 既存のComposableでできないか、というところですね。
 
-今回の場合は、単純に並べるだけでなく、空間があったり、幅や高さを調整したりする必要がありそうなので、普通のCompossableで実現するのは難しそうなのでyes,で左に行きます。
+今回の場合は、単純に並べるだけでなく、空間があったり、幅や高さを調整したりする必要があり、普通のCompossableで実現するのは難しそうなのでyes,で左に行きます。
 
-ここがnoなら既存のコンポーネントかBoxWithConstraintsが使えます。
-
-次に、LayoutPhaseでハイツするcontentそのものを変更する必要があるかを考えます。
+次に、LayoutPhaseで配置するcontentそのものを変更する必要があるかを考えます。
 
 今回、カレンダーのイベントは全て同じこの四角いComposableで表現して、位置とサイズのみの調整で済ませます。
 
 なのでここはno、で右に行きます。
-これがyesだった場合はSubcomposelayoutを使わないと実現できません。
 
 最後に、複数のコンテンツを扱うかです。
 
 今回は、ラベルもイベントも複数あり、それぞれの位置と高さを調整する必要があるので複数のコンテンツを扱う必要があります。
 
-なので、yesとなり、このDailySchedulerはLayout関数で作成すると良さそうです。
-
-妥当な選択に思います。
+なので、yesに行きLayout関数にたどり着きます。
+このDailySchedulerはLayout関数で作成すると良さそうです。
 
 -->
 
@@ -707,7 +700,11 @@ layout: section
 
 # vs Daily Scheduler
 
+<!-->
 
+では、Layout()で作れば良い、というのがわかったところで実際にCustomLayoutを作りながら、使い方をおさえていきたいと思います。
+
+-->
 
 ---
 layout: two-cols
@@ -742,8 +739,6 @@ layout: two-cols
 
 <!-->
 
-では、Layout()で作れば良い、というのがわかったところで実際に作りながら、Layoutの使い方をおさえていきたいと思います。
-
 もう一度作るものの確認をしておきましょう
 
 今右側に見えている、1日のスケジュールを表示するUIを作っていきます。
@@ -753,11 +748,11 @@ TimeLabel、左側にある時刻のラベルです→
 
 横線　ラベルの上にある横線ですー＞
 
-次にメインの予定を表現イベントと表示して→
+予定を表現イベントと表示します→
 時間が重なっているイベントが完全に重なってしまわないように幅を調整します→
 イベントをドラッグ&ドロップで移動できるようにし→
-その際に霧のいい時刻、今回は15分刻みで移動されるようにし→
-最後に縦に非常に長くし、大量にイベントがあった場合に滑らかにスクロールできるように工夫をしていきますl
+その際にきりのいい時刻、今回は15分刻みで移動されるようにし→
+大量にイベントがあった場合にも滑らかにスクロールできるように工夫をしていきますl
 
 このうちのShowEventくらいまでが、CustomLayoutの使い方の主な説明となりまして、そこより後ろは、CustomLayout自体の説明はほぼないので、参考実装といった気持ちで見ていただければと思います。
 
@@ -774,7 +769,7 @@ layout: default
 
 
 <!-->
-実はこのTimeLabelの配置だけでこの発表の大事な部分の説明がほぼほぼ入っているので、やることは単純な割に結構長くなります、ご注意ください。
+実はこのTimeLabelの配置だけでLayoutの説明がほぼほぼ入っているので、やることは単純な割に結構長くなります。
 
 まず要素と並びを確認します。
 
@@ -870,14 +865,12 @@ Layout(
 今回は一日分なので24回repeatして渡されたtimeLabel関数にDateTimeを渡して呼び出しています。
 TimeLabelのComponentの中でDateTimeが呼べるので好きに表示することができます。
 
-そして、あとはこれをcontetntとして渡してあげます。
-これでstep1のcontentの追加は完了です。
+そしてこれをcontetntとして渡してあげます。
+step1のcontentの追加は完了です。
 
 これで、追加されたcontentをMeeasurePolicyのブロックの中で処理することができます。
 
-layoutに入っていきます。
-
-layoutを始める前にラムダに何が渡されてくるのかを確認しましょう
+layoutに入っていくのですが、その前にラムダに何が渡されてくるのかを確認しましょう
 
 -->
 
@@ -930,7 +923,7 @@ interface Measurable : IntrinsicMeasurable {
 
 <!--
 measureblesはMeasurableのリストです。
-Measurableは、measure関数が定義されたinterfaceで、このメソッドを呼ぶことで、子要素のサイズを測定することが可能です。
+Measurableは、measure関数が定義されたinterfaceで、これを使って子要素のサイズを測定することが可能です。
 
 -->
 ---
@@ -953,7 +946,7 @@ val timeLabels = @Composable {
 <!--
 
 先ほどわたしたcontentは大元は一つのこのようなCoposableなラムダだったんですが、
-ここでのmeasurePolicyのmeasure関数にはtimeLabelひとつひとつに対応したMesurableがListになって入ってきます。
+このmeasure関数にはtimeLabelひとつひとつに対応したMesurableがListになって入ってきます。
 
 -->
 
@@ -986,7 +979,7 @@ val maxHeight: Int
 
 <!-->
 
-コンストreインツはサイズに関する制約で、
+コンストレインつは、
 
 minWidth, minHeight, maxWidth,  maxHeigh など、サイズの制約に関する情報を持っています。
 
@@ -1010,8 +1003,8 @@ layout: default
 
 <!-->
 
-ここで入ってくるものは親に与えられた制約になります。
-具体的に親の制約というのをを少し確認してみます。
+ここでは親に与えられた制約が入ってきます。
+具体的に少し確認してみます。
 
 -->
 
@@ -1035,7 +1028,7 @@ Scaffold(
 
 FillMaxSizeのScaffoldにDailySchedulerを置いているとして。
 
-親のmodifierに幾つか制約をつけてここで渡されてくるconstraintsをprintしてみます。
+親のmodifierに幾つか制約をつけてconstraintsをprintしてみます。
 
 -->
 
@@ -1065,7 +1058,7 @@ Constraints(minWidth = 0, maxWidth = 1080, minHeight = 2400, maxHeight = Infinit
 
 <!--
 
-幅はさわっていないので、ハイトに注目してみましょう。
+幅はさわっていないので、ハイトに注目してみましょう。→
 何もなかった場合は、minが0,maxが表示領域の高さになり、->
 
 fillMaxHeightを指定した場合にはminHeightとmaxHeightが表示領域の高さになります。->
@@ -1124,7 +1117,7 @@ Constraints.fixedHeight(height)
 ```
 
 <!-->
-また、親の制約に関係なく固定のサイズにしたい場合にはConstraintsにそれ用のfixed系のメソッドが生えているのでそれらを利用することも可能です。
+また、固定のサイズにしたい場合にはConstraintsにfixed系のメソッドが生えているのでそれらを利用することも可能です。
 -->
 
 ---
@@ -1178,7 +1171,7 @@ layout: section
 
 <!-->
 
-具体的には、constraintsにmaxはいともしくはwidthがinfinityかどうかをチェックするhasBounded何たらというメソッドが生えているので、それを使って、処理を分岐させることができます
+具体的には、constraintsにmaxがinfinityかどうかをチェックするhasBounded何たらというメソッドが生えているので、それを使って、処理を分岐させることができます
 
 -->
 
@@ -1201,7 +1194,7 @@ val placeable = measurable.measure(constraints.copy(
 
 <!-->
 
-あとこれはおまけなんですが、感覚的にはmaxHeightにinfinityが入っていて、コヨウソのmodifierにMaxHeightが入ってきた時に高さがInfinityになってしまってクラッシュするんじゃないかと思ったんですが、->
+これはおまけなんですが、感覚的にはmaxHeightにinfinityが入っていて、コヨウソのcomposableにMaxHeightがついていた時に高さがInfinityになってクラッシュするかと思ったんですが、->
 確認して見たところ、クラッシュはせずTextの場合はwrapContentと同じような挙動になりました。
 fillMaxをつけているのに最大サイズにならないときは親の制約を気にしてみると良いかもしれません。
 
@@ -1297,7 +1290,7 @@ layout: default
 具体的には、MesurableのListを回して、それぞれの要素で.measureを読んでplaceableを作成します。
 
 先ほど親にはFillMasHeightとVerticalScrollをつけたので、
-そのまま使うと、ラベルは全て表示領域いっぱいのの高さになってしまいますから、0と一時間あたりの高さを指定してやります。
+そのまま使うと、ラベルは全て表示領域いっぱいのの高さになるので、0と一時間あたりの高さを指定してやります。
 
 こうすると、一時間分の領域内で、labelのcomponentのサイズが決まります。
 
@@ -1307,7 +1300,7 @@ layout: default
 
 もし、ラベルにFillMaxHeightをつけていた場合は、一時間分の高さまでは伸びることになります。
 
-measureの結果はPlaceableというクラスで返ってきます。このPlaceeableから高さや幅を取得することが可能です。このラベルと同じサイズの何かを作りたいといった場合にもPlaceable.haitを参照することで実現ができます。
+measureの結果はPlaceableというクラスで返ってきます。このPlaceeableから測定した結果の高さや幅を取得することが可能です。
 
 // ちなみにmeasuredHeighというものも生えていて、heightは最終的に表現されるサイズ、mesuredHeightは測定されたサイズで、基本的には一致しているが、場合によっては一致しないらしいので注意が必要です。
 
@@ -1358,7 +1351,7 @@ alignmentLinesは今回使わないのですごく軽く説明するのですが
 
 例えばTextのFirstBaselineなんかがこの仕組みを利用しています。
 
-詳しくは公式のページをご覧ください。名前だけでも覚えておくといざというときに役に立つのではないかと思います。
+詳しくは公式のページをご覧ください。いざというときに役に立つのではないかと思います。
 
 （ここで一息）
 
@@ -1398,7 +1391,6 @@ layout(
 ->高さは表示する時間全てを置けるだけ必要なので、ラベルの数に一時間あたりの高さをかけたものになります。
 ここにMaxHeightを入れるとinfinityが入ってしまい、IllegalStateExceptionでcrashするのでご注意ください。
 
-java.lang.IllegalStateException: Size(1080 x 2147483647) is out of range. Each dimension must be between 0 and 16777215.
 
 ->
 blockの中ではこ要素を配置します。
@@ -1432,9 +1424,6 @@ layout: default
 左がlabelにmodifierを指定していない場合、右がFillMaxHeightとpaddingを指定してみた場合です。
 想定通り、1時間の範囲でサイズが決まっているのがわかります。
 
-では次、に縦軸（横線）の表示
-
-fuga20: 13:10
 -->
 
 ---
@@ -1448,7 +1437,7 @@ layout: default
 
 <!--
 
-これですね。
+では次、に横線の表示です。
 
 特に難しいことはないです。
 
@@ -1476,7 +1465,7 @@ layout: default
 <!-->
 
 とりあえず、ラベルと同じようにLayoutに渡すcomopsesableを定義します。
-ラベルと同じ個数の横幅いっぱいで高さ1dpの色つきBoxにしてみます。
+ラベルと同じ個数の、横幅いっぱいで高さ1dpの色つきBoxにしてみます。
 
 <-->
 
@@ -1507,7 +1496,7 @@ Layout(
 
 ここでワンポイントなんですが、Layout関数にはContentとしてComposableを受け取るものとContentsとしてcomposableのListを受け取るものとがあります。
 
-contentの方でも渡せると言えば渡せるんですが、そうするとmeasureBlockに入ってくるmesurablesがラベルとラインの区別なく全て一つのリストとして入ってくるため使いずらいので、属性の違うcomposableを扱う場合はListで渡す方が使いやすいです。
+contentの方だと、measureBlockに入ってくるmesurablesがラベルとラインの区別なく全て一つのリストとして入ってくることになるため、属性の違うcomposableを扱う場合はListで渡す方が使いやすいです。
 
 -->
 
@@ -1584,7 +1573,7 @@ layout(constraints.maxWidth, totalHeight) {
 <!-->
 
 配置すれば完成です。
-TimeLabelと同じだけ作っているので、雑にタイムラベルと一緒に同じ位置にplaceしています。
+TimeLabelと同じだけ作っているので、雑にタイムラベルと同じ位置にplaceしています。
 
 <-->
 
@@ -1643,7 +1632,6 @@ data class CalendarEvent(
 start
 end
 のタイムがあれば良いですが、一応idとtitleだけ入れています。
-interfaseとして定義して使う側で拡張できるようにとかいう話もあるんですが今回は割愛します。
 -->
 
 ---
@@ -1700,8 +1688,8 @@ Layout(
 <!--
 イベントのリストから、ebentのcomposeを同じだけ作って→渡します。
 
-これでLayoutの中でstartTimeとendTimeを見て配置すればいいのですが、一つ問題があります。
-ブロックに入ってきたmesurabeはeventの情報を持っていないので、今のままだとstartとendをmeasureのblock内で取ってくることができません。
+これでLayoutの中でstartとendを見て配置すればいいのですが、一つ問題があります。
+ブロックに入ってきたmesurabelはeventの情報を持っていないので、今のままだとstartとendを参照することができません。
 -->
 
 ---
@@ -1811,7 +1799,7 @@ val eventPlaceablesWithEvent = eventMeasureables.map { measurable ->
 一分あたりの高さをかけて高さを求めます。->
 幅はlabelと重ならないように、一番幅のあるラベル分だけ引いておきます。->
 
-そしてEventは幅も高さも固定のサイズなので、Fixedで固定して、測定します。
+そしてEventは幅も高さも固定のサイズなので、Fixedを使って測定します。
 
 これで、イベントの時間による高さと、ラベルを避けて収まる幅のplaceableができました。
 -->
@@ -1846,7 +1834,7 @@ layout(constraints.maxWidth, totalHeight) {
 最後にLayout関数で配置しますー＞
 タイムラベルのyの位置を基準にしてEventのStartの位置を計算したいので、dateTimeとYのMapを作っておきます。
 →
-そしてStartTimeからラベルのY位置をとってきて、分の分だけずらしてやればokです。。
+そしてStartTimeからラベルのY位置をとってきて、ミニッツの分だけずらしてやればokです。。
 -->
 
 ---
@@ -1862,8 +1850,6 @@ layout: default
 <!--
 これでイベントの配置ができました。
 
-
-fuga20:4:50
 -->
 
 ---
@@ -1878,8 +1864,7 @@ layout: default
 <!--
 次はこういう状態です。
 
-同じ時間にイベントがあったときに、幅と位置を調整して全て見えるようにします。
-
+同じ時間にイベントがあったときに、幅と位置を調整して全てが見えるようにします。
 -->
 
 ---
@@ -1901,8 +1886,8 @@ stepとしては、　
 - グループのかずに合わせて幅を調整
 - グループ内の何番目かによってxOffsetを調整
 
-順にやっていきます。
-位置とサイズを調整するためには重なりのあるイベントを探す必要があるのでまずはグルーピングします。
+の順にやっていきます。
+まずはグルーピングします。
 
 -->
 
@@ -1971,7 +1956,7 @@ data class WrappedCalendarEvent(
 <!--
 
 そうしましたら、重なるイベントの数と位置をEventに持たせます。
-レイアウトするとき、幅を決めるのとxのoffsetを決めるのに必要です。ー＞
+レイアウトするとき、幅を決めるのと、xのoffsetを決めるのに必要です。ー＞
 CalenderEventを一枚ラップして、追加の情報として、Groupを追加しています。
 ここの構造は多分お好みで大丈夫です。
 
@@ -2040,7 +2025,7 @@ placeable.place(
 ```
 
 <!--
-あとは特に特別なことはなくて、->幅をsizeで割ってやって、->xの座標をindex分だけずらしてやればokです。
+あとは特別なことはなくて、->幅をsizeで割ってやって、->xの座標をindex分だけずらしてやればokです。
 -->
 
 ---
@@ -2055,9 +2040,6 @@ layout: default
 <!--
 
 完成です。
-
-
-fuga20:2:30
 
 -->
 
@@ -2087,21 +2069,26 @@ layout: default
 
 # Choices
 
-1. Attach Draggable to each event item and manage dragging individually.
-2. Attach pointerInput to a custom view and manage it.
+<br/>
+
+## 1. Attach Draggable to each event item.
+
+<br/>
+
+## 2. Attach pointerInput to a custom view.
 
 <!-->
 
 思いつく方針としては、二つありました
 
-各イベントアイテムにDraggableをつけてそれぞれでドラッグを管理する
+各イベントアイテムにDraggableをつけてそれぞれでドラッグを管理する方法と
 と
 カスタムViewにpointerInputをつけて管理する
 
 方法です。
 今回は簡単そうな1を選択しました。
 
-ドラッグでもっと色々な動き、例えば、イベントの入れ替えなどをするのであれば2の方針も検討する必要がありそうです。
+ドラッグでもっと色々な動き、例えば、イベントの入れ替えなどをするのであれば2の方針も検討する必要があるかもしれません。
 
 具体的な実装を見てみましょう。
 -->
@@ -2139,10 +2126,10 @@ data class WrappedCalendarEvent(
 <!--
 事前準備として、ドラッグしたアイテムのY位置のオフセットを大元のcomposableに持たせます。
 
-そして、各イベントにはドラッグ状態を表すdragStateを持たせます。
+そして、各イベントには、ドラッグ状態を表すdragStateを持たせます。
 
 Drag中かどうかというのと、drag中のDateTimeはイベントの描画に利用したいため各イベントに持たせています。
-offsetの更新はイベントの描画の更新よりも高頻度なため、イベントに持たせると余計にcompositionが走ることになるため別で持たせた方が良いです。
+offsetの更新はイベントの更新よりも高頻度なため、イベントに持たせると余計にcompositionが走ることになるため別で持たせた方が良いです。
 -->
 
 ---
@@ -2204,7 +2191,7 @@ Box(
 <!--
 >
 
-そしてOnDragStartedでeventのDragの状態を更新してやります。
+そしてOnDragスターテッドでeventのDragの状態を更新してやります。
 -->
 
 ---
@@ -2236,7 +2223,7 @@ Box(
 ```
 
 <!--
-最後にonDragStoppedで、DragStateとyOffsetをを元に戻します。
+最後にonDragストップどで、DragStateとyOffsetをを元に戻します。
 そのタイミングで、onFinishDragEventをよんでやります。これはCostomLayoutの引数で関数を受け取るようにしておきましょう。
 -->
 
@@ -2270,12 +2257,11 @@ eventPlaceablesWithEvent.forEach { (placeable, event) ->
 
 
 <!--
-これでlayoutのタイミングでドラッグの状態が取れるようになったので、Layoutのblockの中でもしdtag中のイベントだった場合に、offSetぶんずらしてやるようにします。
+これでlayoutのタイミングでドラッグの状態が取れるようになったので、Layoutのblockの中でdrag中のイベントだった場合にのみ、offSetぶんずらしてやるようにします。
 単純にoffsetyを足すだけです。
 ついでにzindexも1fにして、常に一番上に描画されるようにしています。
 
-これで一応ドラッグができるようになりました。
-
+これでドラッグができるようになりました。
 -->
 
 ---
@@ -2311,7 +2297,7 @@ layout: default
 
 このドラッグしたアイテムがカクカクとする動きですね。今回は15の倍数の分にスナップしてみます
 
-やることは簡単で、ドラッグ中に単純にoffsetを反映した位置ではなく一番近い位置に起くだけです。
+やることは簡単で、ドラッグ中にoffsetを単純に反映した位置ではなく一番近いきりのいい位置に起くだけです。
 
 -->
 
@@ -2341,10 +2327,8 @@ private fun findClosestFiveMinute(dateTime: LocalDateTime): Int {
 
 <!--
 
-
 まずは一番近い15の倍数の分を取得するメソッドを書きます。
 これはLayoutと直接関係ないので説明は割愛します。
-
 
 -->
 
@@ -2380,7 +2364,7 @@ eventPlaceablesWithEvent.forEach { (placeable, event) ->
 <!--
 これを使っていきます。
 
-offsetから何分分移動しているかを計算して、->そこから時刻を計算して、->mapから0分だった場合のyを取ってきて、->先ほどのメソッドで見つけた一番近くのキリがいい分の分だけ高さを加えて->yに反映してあげればOKです。
+→offsetからなんふんぶん移動しているかを計算して、->そこから時刻を計算して、->mapから0分だった場合のyを取ってきて、->先ほどのメソッドで見つけた一番近くのキリがいいふんのぶんだけ加えて->yに反映してあげればOKです。
 -->
 
 ---
@@ -2415,8 +2399,9 @@ eventPlaceablesWithEvent.forEach { (placeable, event) ->
 ドラッグ中のイベントの見た目が変えられるように、同じタイミングでeventが持っているDragg中のstartとendも更新してあげます。
 あとはこれを使ってイベントの見た目を変えるようにしてあげれば完成です。
 
-ここで、LayoutPhaseでCompositionPhaseで参照しているeventのデータを変更しているのが若干不安なんですが、今のところ他に方法も思いつかないのと、特に問題が起きていないのでそのままにしているんですが、
+ここで、CompositionPhaseで参照しているeventのデータを変更しているのが若干不安でして、今のところ他に方法も思いつかないのと、特に問題が起きていないのでそのままにしているんですが、
 もし何か引っ掛かる方いらっしゃいましたらぜひ、コメントをいただければと思っております。
+
 一息
 
 -->
@@ -2455,9 +2440,9 @@ layout: default
 
 
 <!--
-先ほどの動きをLayout Inspectorで見てみると、こんな感じでドラッグ中に動かしているアイテム以外もreCompositionが走っています。
+先ほどの動きをLayout Inspectorで見てみると、ドラッグ中に動かしているアイテム以外もreCompositionが走っています。
 
-ただ、ドラッグ中に中身を更新しているのはドラッグ中のeventだけなので、動かしていないイベントはRecompositionが走る必要性がないはずです。
+ただ、見た目を更新しているのはドラッグ中のeventだけなので、動かしていないイベントはRecompositionが走る必要性がないはずです。
 
 -->
 
@@ -2490,8 +2475,8 @@ https://developer.android.com/develop/ui/compose/performance/stability/diagnose#
 
 <!--
 
-これは、きっとCalenderEventのComposeがskippableじゃないからだろうなあということでComopse compierreportsを見てみると、このように
-->やはり、EventItemのComposableがskippableになっていません。じゃあそれがなぜかなということで
+これは、きっとCalenderEventのComposeがskippableじゃないからだろうなあということでComopse compier reportsを見てみると、このように
+->やはり、EventItemのComposableがskippableになっていませんでした。じゃあそれがなぜかなということで
 
 ->クラスの方を見てみるとCalenderEventのstartTimeとendTimeがUnstableとみなされています。
 
@@ -2529,7 +2514,7 @@ https://developer.android.com/develop/ui/compose/performance/stability/fix#kotli
 
 <!--
 
-具体的にはandroid developerにあるように、.confファいルに対象のpackage名を追加します。今回はLocalDateTimeです。そしてbuildGradleこれらのKotlinOptionsを追加すればokdesu.
+具体的にはandroid developerにあるように、.confファいルに対象のpackage名を追加します。今回はLocalDateTimeです。そしてbuildGradleにこれらのKotlinOptionsを追加すればokです。
 
 詳細はリンク先を見て見ていただければと思います。
 
@@ -2566,7 +2551,7 @@ https://developer.android.com/develop/ui/compose/performance/stability/diagnose#
 <!-->
 
 これでリビルドすると、このように->
-LocalDateTimeを使っている二つがstable隣
+LocalDateTimeを使っている二つがstableとなり
 → EventItemのComposableもskkippableとみなされます
 
 <-->
@@ -2584,10 +2569,9 @@ layout: default
 </video>
 
 
-
 <!-->
 
-結果、このようにドラッグしているアイテム以外のrecompositionは走らずにすみます。
+結果、ドラッグしているアイテム以外のrecompositionは走らずにすむようになりました。
 挙動に影響が出ているわけではないので大きな問題ではないのですが、頭の片隅に入れておくと役に立つ日が来るかもしれません。
 
 <-->
@@ -2603,7 +2587,6 @@ layout: section
 
 最後に遅延レンダリングです。
 
-
 -->
 
 ---
@@ -2616,19 +2599,17 @@ layout: section
 
 <!--
 
-遅延レンダリングと書いてしまったのですが、やりたいこととしては、方法はさておき、
-カスタムレイアウトが縦、もしくは横に非常に長く、かつアイテムも大量に存在した場合にも、滑らかにスクロールできるようにしたい。
+やりたいこととしては、方法はさておき、
+カスタムレイアウトが非常に長く、かつアイテムも大量に存在した場合にも、滑らかにスクロールできるようにしたい。
 という話になります。
 
 ここに関してはかなり語弊のある書き方をしてしまい大変申し訳ありません。
 
-LazyColmunのようなことをやりたい、というとわかりやすいかもしれません。
-
-これも正直Costom Layoutと直接関係ある話ではないので参考程度に聞いていただけると良いと思います。
+遅延レンダリングというよりはLazyColmunのようなことをやりたい、というとわかりやすいかもしれません。
 
 （ここで一息）
 
-ではまず効果を実感できるように、ここまでに作成したDailySchedulerで365日分の予定をを縦に並べてみます。
+ではまず効果を実感できるように、ここまでに作成したDailySchedulerで365日分の予定を縦に並べてみます。
 
 -->
 
@@ -2677,7 +2658,7 @@ layout: default
 - Execute the usual layout processing
 
 <!--
-方針としては、表示に必要な要素だけをContentに追加する
+今回は、表示に必要な要素だけをContentに追加してみようという方針で
 
 手順としては、viewPortとscrollOfssetをつかって必要な要素を導き出そう、という感じです
 順にやっていきます。
@@ -2716,9 +2697,9 @@ scrollStateからviewPortのサイズ、Viewの表示サイズが取れるので
 次に、何番目から表示すればいいかをscrollのオフセットから計算します、scrollStateのvalueからoffsetが取れるので、それを一時間あたりの高さで割ることで求められます。
 
 この10引いているのは、EventをStartTime基準で並べているため、手前にある程度長く余裕を持つためにやっています。
-これはちょっと雑な実装で10時間以上の予定があると多分うまく動かないのですが、本筋ではないので今回は一旦おいておいています。
+これはちょっと雑な実装で10時間以上の予定があると多分うまく動かないのですが、今回は一旦おいておいています。
 
-どちらもderivedStateOfにしておいた方が無駄がないです。
+どちらもでライブどステイとオブにしておいた方が余計な更新がなくてすみます。
 
 -->
 
@@ -2754,9 +2735,9 @@ private fun createShouldShowTimeLabelSet(
 
 <!--
 この二つの値から、表示したい時刻のSetを作ります。
-startIndexからitemCount分のtimeLabelを作っています。
+startIndexからitemCount分のtimeLabelを作っています。->
 
-startのIndexからViewCountの分回して、DateTimeを詰めます。特に特別なことはないです。
+startのIndexからViewCountの分回して、DateTimeを詰めます。
 -->
 
 ---
@@ -2787,7 +2768,7 @@ var wrappedEvents by remember(events, visibleTimeLabel) {
 ```
 
 <!-->
-そしてこのsetの中ににstartかendが含まれているEventを抽出します。
+そしてこのsetの中ににstartかendが含まれているEventを抽出します。->
 
 こちら実はすごく長いeventがあったら表示されないんですが、直す時間がなかったのでそのままいきます。
 
@@ -2812,11 +2793,11 @@ timeLabelPlacablesWithDataTime.forEachIndexed { index, (placeable, dateTime) ->
 ```
 
 <!--
-あとはLayoutのTotalHeightを表示したい時刻の数だけ分だけ伸ばすようにして、今回だと24時間かける365日分ですね。
+あとはLayoutのTotalHeightを表示したい時刻のぶんだけ伸ばすようにして、今回だと24時間かける365日分ですね。
 
 TimeLabelのyをstartIndexの分だけずらすようにしてやるだけで完成です。
 
-eventや背景の線は時刻を基準に配置しているのでこれだけで一緒にズレます。
+eventや背景の線は時刻を基準に配置しているのでこれだけで一緒にズレてくれます。
 
 -->
 ---
@@ -2867,7 +2848,7 @@ layout: default
 
 ということで無事、一通り実装を終えることができました。
 
-いやあどうでしょうか、簡単でしたかね？
+どうでしょうか、簡単でしたかね？
 私は大変でした
 
 -->
@@ -2918,7 +2899,7 @@ layout: two-cols-header
 
 後半では、DailySchedulerの実装を通して、こちらに列挙したような、CustomLayoutに必須の知識と具体的な使い方を紹介しました。
 
-そこそこ物量がありましたので、出てきた単語をキーワードとして頭の片隅に置いておいて、詳しく思い出したくなったらぜひ、こちらの資料を再度見て見ていただければ幸いです。
+そこそこ物量がありましたので、出てきた単語をキーワードとして頭の片隅に置いておいて、詳しく思い出したくなったらぜひ、こちらの資料を再度見ていただければ幸いです。
 
 -->
 
@@ -2935,7 +2916,7 @@ layout: section
 今日のゴールは
 Layout()関数を使って簡単なCustomLayoutを作れるようになる
 だったのですが、みなさんいかがでしょうか？
-できそうとかできなそうとか、ぜひTwitterにでも呟いていただけると後でニヤニヤしながら見れますのでぜひよろしくお願いいたします。
+できそうとかできなそうとか、ぜひハッシュタグ付きでXに呟いていただけると後でニヤニヤしながら見れますのでぜひよろしくお願いいたします。
 
 では、以上で終わります。ご清聴いただきありがとうございました。
 -->
