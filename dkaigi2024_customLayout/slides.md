@@ -98,7 +98,7 @@ layout: two-cols
 <br/>
 <br/>
 
-<video autoplay muted style="height:400px; margin:0 auto;">
+<video autoplay muted loop style="height:400px; margin:0 auto;">
   <source src="/first.mov" type="video/mp4" >
 </video>
 
@@ -683,7 +683,7 @@ layout: two-cols
 <br/>
 <br/>
 
-<video autoplay muted style="height:400px; margin:0 auto;">
+<video autoplay muted loop style="height:400px; margin:0 auto;">
   <source src="/first.mov" type="video/mp4" >
 </video>
 
@@ -2032,7 +2032,7 @@ layout: default
 # Drag and drop
 
 
-<video autoplay muted style="height:450px; margin:0 auto;">
+<video autoplay muted loop style="height:450px; margin:0 auto;">
   <source src="/drag2.mov" type="video/mp4" >
 </video>
 
@@ -2250,7 +2250,7 @@ layout: default
 
 # Drag and drop
 
-<video autoplay muted style="height:450px; margin:0 auto;">
+<video autoplay muted loop style="height:450px; margin:0 auto;">
   <source src="/drag2.mov" type="video/mp4" >
 </video>
 
@@ -2270,7 +2270,7 @@ layout: default
 
 # Snap to round number
 
-<video autoplay muted style="height:450px; margin:0 auto;">
+<video autoplay muted loop style="height:450px; margin:0 auto;">
   <source src="/draging.mov" type="video/mp4" >
 </video>
 
@@ -2393,7 +2393,7 @@ layout: default
 # Dragging
 
 
-<video autoplay muted style="height:450px; margin:0 auto;">
+<video autoplay muted loop style="height:450px; margin:0 auto;">
   <source src="/draging.mov" type="video/mp4" >
 </video>
 
@@ -2414,7 +2414,7 @@ layout: default
 # Recomposition?
 
 
-<video autoplay muted style="height:450px; margin:0 auto;">
+<video autoplay muted loop style="height:450px; margin:0 auto;">
   <source src="/update.mov" type="video/mp4" >
 </video>
 
@@ -2470,7 +2470,7 @@ layout: default
 
 # Ok!
 
-<video autoplay muted style="height:450px; margin:0 auto;">
+<video autoplay muted loop style="height:450px; margin:0 auto;">
   <source src="/drag_notUpdated.mov" type="video/mp4" >
 </video>
 
@@ -2718,7 +2718,7 @@ layout: default
 
 # We can scroll
 
-<video autoplay muted style="height:450px; margin:0 auto;">
+<video autoplay muted loop style="height:450px; margin:0 auto;">
   <source src="/scrll_ok.mov" type="video/mp4" >
 </video>
 
@@ -2750,7 +2750,7 @@ layout: default
 
 # Recomposition
 
-<video autoplay muted style="height:450px; margin:0 auto;">
+<video autoplay muted loop style="height:450px; margin:0 auto;">
   <source src="/scroll_recomposition.mov" type="video/mp4" >
 </video>
 
