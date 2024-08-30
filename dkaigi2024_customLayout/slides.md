@@ -38,6 +38,22 @@ layout: two-cols
 
 # Self-introduction
 
+　　
+<br/>
+
+Name
+
+
+### saiki iijima
+
+At
+<br/>
+
+<img src="/logo_lockup_horizontal_cmyk.png" style=" background-color : #ffffff; height:54px; padding : 8px ;"/>
+
+
+X
+### @saikiiiji
 
 
 ::right::
@@ -49,7 +65,11 @@ layout: two-cols
 まずは自己紹介をさせていただきます。
 
 改めまして、飯島 彩輝と申します。
-現在は株式会社UNEXTにてAndroid端末やFireTablet向けのアプリの開発をしております。
+現在は株式会社UNEXTにてUnextという動画配信サービスのAndroid端末やFireTablet向けのAndroidアプリの開発をしております。
+
+社内外問わず、このご飯のアイコンで活動しています。手作りです。
+
+
 
 Droidkaigiに関連した話だと、2018年にTDDに関する発表をさせていただいて、2021年にはdroidNinjaに記事を投稿させていただいたりしておりまして、今回はかなり久々の登壇者としての参加となります。
 
@@ -66,7 +86,7 @@ layout: default
     - Which method?
 
 - Practice Custom layout
-    - vs Daily Scheluer
+    - vs Daily Scheduler
 
 
 <!--
@@ -771,11 +791,11 @@ layout: default
 layout: default
 ---
 
-# Create DailySchedule
+# Create DailyScheduler
 
 ```kotlin {*|1-4|8-11|5-9|11-14}
 @Composable
-fun DailySchedule(
+fun DailyScheduler(
   timeLabel: @Composable (LocalDateTime) -> Unit,
 ){
   // Create contents
@@ -1007,7 +1027,7 @@ Scaffold(
     modifier = Modifier
         .fillMaxSize()
     ) { innerPadding ->
-        DailySchedule(..)
+        DailyScheduler(..)
     }
 ```
 
@@ -1635,7 +1655,7 @@ layout: default
 ```kt
 
 @Composable
-fun DailySchedule(
+fun DailyScheduler(
     modifier: Modifier = Modifier,
     events: List<CalendarEvent>, // add
     timeLabel: @Composable (LocalDateTime) -> Unit = { StandardTimeLabel(time = it) },
