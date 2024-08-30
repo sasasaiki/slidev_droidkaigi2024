@@ -559,7 +559,7 @@ layout: default
 <!--
 ここまでで、それぞれができることと用途を確認できました。まとめるとこのようになります。
 
-これだけだとまだいまいち選び方がわからないなあという方のためにですね、
+なるんですが、まあこれだけだとまだいまいち選び方がわからないなあということで、
 -->
 
 
@@ -573,7 +573,7 @@ layout: center
 ```mermaid {scale: 0.9}
 graph TD
 B(start) --> C[customize layout phase?]
-C -->|Yes| E[change content in layout pahse?]
+C -->|Yes| E[change content in layout phase?]
 C -->|No| D(BoxWithConstraints or other component)
 E -->|Yes| F(SubcomposeLayout)
 E -->|No| G[handle multiple content?]
@@ -583,24 +583,65 @@ G -->|No| H(Modifier.layout)
 
 
 <!-->
-フローチャート用意してきました。
+とても、便利な、フローチャートを作っておきました。
 
-菱形だと場所とるので全て死角になっているのですが、カスタムレイアウトを作りたいな、と思った時にはこの図に従えば恐らく適当なメソッドが選べると思います。
+菱形だと場所とるので全てしかくになっているのですが、カスタムレイアウトを作りたいな、と思った時にはこの図に従えば恐らく適当なメソッドが選べると思います。
 
-まずは、Layout Phaseをカスタマイズする必要があるかを考えます。
+ということで、今回作るDailySchedulerで試してみましょう。
 
-その必要がなければ、BoxWithConstrainntか他の基本的なcomponentで作れる可能性があります。
+-->
 
-次にlayoutPhaseで、親の制約や、他の子要素のサイズによって、ハイ値するコンテンツを変える必要があるかどうかを考えます。
-これが必要なら、SubcommposeLayoutを使う必要があります。
+---
+layout: two-cols-header
+---
 
-最後に、複数の要素を扱うかを考えます。
+# Which method should I choose?
 
-これがyesであればLayout関数、noならばModifier.layoutです。
+::left::
 
-では、今回作るDailySchedulerはというと、
-ラベル、イベントなど複数の要素があり、
-それぞれ位置とサイズの調整はしますが、場合によってcontentを変えることはしないので複数の要素を自由に配置するLayoutを使うことができます。
+```mermaid {scale: 0.9}
+graph TD
+B(start) --> C[customize layout phase?]
+C -->|Yes| E[change content in layout phase?]
+C -->|No| D(BoxWithConstraints or other component)
+E -->|Yes| F(SubcomposeLayout)
+E -->|No| G[handle multiple content?]
+G -->|Yes| I(Layout)
+G -->|No| H(Modifier.layout)
+```
+
+::right::
+
+<br/>
+
+
+<img src="/event_overwrap.png" style="height:400px; margin:0 auto;"/>
+
+
+<!-->
+ということで、今回作るDailySchedulerで試してみましょう。
+
+まずはLayoutPhaseをカスタマイズする必要があるか、を考えます。
+既存のComposableでできないか、というところですね。
+
+今回の場合は、単純に並べるだけでなく、空間があったり、幅や高さを調整したりする必要がありそうなので、普通のCompossableで実現するのは難しそうなのでyes,で左に行きます。
+
+ここがnoなら既存のコンポーネントかBoxWithConstraintsが使えます。
+
+次に、LayoutPhaseでハイツするcontentそのものを変更する必要があるかを考えます。
+
+今回、カレンダーのイベントは全て同じこの四角いComposableで表現して、位置とサイズのみの調整で済ませます。
+
+なのでここはno、で右に行きます。
+これがyesだった場合はSubComposelayoutを使わないと実現できません。
+
+最後に、複数のコンテンツを扱うかです。
+
+今回は、ラベルもイベントも複数あり、それぞれの位置と高さを調整する必要があるので複数のコンテンツを扱う必要があります。
+
+なので、yesとなり、このDailySchedulerはLayout関数で作成すると良さそうです。
+
+妥当な選択に思います。
 
 -->
 
@@ -608,6 +649,8 @@ G -->|No| H(Modifier.layout)
 ---
 layout: section
 ---
+
+## Practice Custom layout
 
 # vs Daily Scheduler
 
@@ -623,6 +666,8 @@ layout: two-cols
 
 <br/>
 
+<v-clicks>
+
 - Show time label 
 - Show Vertical axis
 - Show event
@@ -631,6 +676,7 @@ layout: two-cols
 - Snapping events
 - Lazy rendering  
 
+</v-clicks>
 
 ::right::
 
@@ -643,7 +689,13 @@ layout: two-cols
 
 <!-->
 
-ということで、
+では、Layout()で作れば良い、というのがわかったところで実際に作りながら、Layoutの使い方をおさえていきたいと思います。
+
+もう一度作るものの確認をしておきましょう。→
+
+今右側に見えている、1日のスケジュールを表示するUIを作っていきます。
+
+
 
 -->
 
