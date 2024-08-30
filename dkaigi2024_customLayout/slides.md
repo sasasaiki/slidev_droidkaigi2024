@@ -3,7 +3,7 @@
 theme: seriph
 # random image from a curated Unsplash collection by Anthony
 # like them? see https://unsplash.com/collections/94734566/slidev
-background: https://cover.sli.dev
+# background: https://cover.sli.dev
 # some information about your slides (markdown enabled)
 title: Welcome to Slidev
 info: |
@@ -38,8 +38,11 @@ layout: two-cols
 
 # Self-introduction
 
+
+
 ::right::
 
+<img src="/gohan.jpg" style="height:450px; margin:0 auto;"/>
 
 
 <!--
@@ -2064,12 +2067,10 @@ layout: default
 
 # Choices
 
-1. 各イベントアイテムにDraggableをつけてそれぞれでドラッグを管理する
-2. カスタムViewにpointerInputをつけて管理する
+1. Attach Draggable to each event item and manage dragging individually.
+2. Attach pointerInput to a custom view and manage it.
 
 <!-->
-
-TODO:英語
 
 思いつく方針としては、二つありました
 
@@ -2271,9 +2272,6 @@ layout: default
 <!--
 ドラッグ中のアイテムの見た目の更新と、ドラッグした後の処理はスナッピングの後にやります。
 
-
-fuga20:3:24
-
 -->
 
 ---
@@ -2397,6 +2395,10 @@ eventPlaceablesWithEvent.forEach { (placeable, event) ->
 ドラッグ中のイベントの見た目が変えられるように、同じタイミングでeventが持っているDragg中のstartとendも更新してあげます。
 あとはこれを使ってイベントの見た目を変えるようにしてあげれば完成です。
 
+ここで、LayoutPhaseでCompositionPhaseで参照しているeventのデータを変更しているのが若干不安なんですが、今のところ他に方法も思いつかないのと、特に問題が起きていないのでそのままにしているんですが、
+もし何か引っ掛かる方いらっしゃいましたらぜひ、コメントをいただければと思っております。
+一息
+
 -->
 
 ---
@@ -2437,7 +2439,43 @@ layout: default
 
 ただ、ドラッグ中に中身を更新しているのはドラッグ中のeventだけなので、動かしていないイベントはRecompositionが走る必要性がないはずです。
 
-これは、LocalDateTimeが安定していないとみなされていことが原因なので、安定してるとみなして、不要なrecompositionをskipできるようにしてあげると解決します。
+-->
+
+---
+layout: default
+---
+
+# Skippable?
+
+```kt {*|1|8,11-14}
+restartable scheme("[androidx.compose.ui.UiComposable]") fun EventItem(
+  stable modifier: Modifier? = @static Companion
+  unstable event: WrappedCalendarEvent
+)
+
+---- 
+
+unstable class CalendarEvent {
+  stable val id: String
+  stable val title: String
+  unstable val startTime: LocalDateTime
+  unstable val endTime: LocalDateTime
+  <runtime stability> = Unstable
+}
+
+```
+
+Compose compiler reports
+https://developer.android.com/develop/ui/compose/performance/stability/diagnose#compose-compiler
+
+<!--
+
+これは、きっとCalenderEventのComposeがskippableじゃないからだろうなあということでComopse compierreportsを見てみると、このように
+->やはり、EventItemのComposableがskippableになっていません。じゃあそれがなぜかなということで
+
+->クラスの方を見てみるとCalenderEventのstartTimeとendTimeがUnstableとみなされています。
+
+ですのでこのLocalDateTimeを安定しているということをcompilerに伝えると解決します。
 
 -->
 
@@ -2481,6 +2519,44 @@ https://developer.android.com/develop/ui/compose/performance/stability/fix#kotli
 layout: default
 ---
 
+# Skippable?
+
+```kt {*|8,11-14|1}
+restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun EventItem(
+  stable modifier: Modifier? = @static Companion
+  stable event: WrappedCalendarEvent
+)
+
+---- 
+
+stable class CalendarEvent {
+  stable val id: String
+  stable val title: String
+  stable val startTime: LocalDateTime
+  stable val endTime: LocalDateTime
+  <runtime stability> = Stable
+}
+
+```
+
+Compose compiler reports
+https://developer.android.com/develop/ui/compose/performance/stability/diagnose#compose-compiler
+
+
+<!-->
+
+これでリビルドすると、このように->
+LocalDateTimeを使っている二つがstable隣
+→ EventItemのComposableもskkippableとみなされます
+
+<-->
+
+
+
+---
+layout: default
+---
+
 # Ok!
 
 <video autoplay muted loop style="height:450px; margin:0 auto;">
@@ -2491,10 +2567,8 @@ layout: default
 
 <!-->
 
-これでリビルドすると、このようにドラッグしているアイテム以外のrecompositionは走らずにすみます。
+結果、このようにドラッグしているアイテム以外のrecompositionは走らずにすみます。
 挙動に影響が出ているわけではないので大きな問題ではないのですが、頭の片隅に入れておくと役に立つ日が来るかもしれません。
-
-fuga20:3:20
 
 <-->
 
@@ -2773,18 +2847,75 @@ layout: default
 
 ということで無事、一通り実装を終えることができました。
 
-fuga20:4:20
+いやあどうでしょうか、簡単でしたかね？
+私は大変でした
+
 -->
 
 ---
-layout: default
+layout: section
 ---
 
-# まとめ
+# Summary
+
+<!--
+
+はい、ということで紹介する内容としては以上になります。
+
+-->
+
+---
+layout: two-cols-header
+---
+
+# Summary
+
+::left::
+
+- Learnig Custom layout
+    - Layout()
+    - modifier.layout()
+    - SubcmposeLayout()
+    - BoxWithConstraints()
+
+::right::
+
+- Practice Custom layout
+    - layout phase
+    - measure 
+    - constraionts
+    - layout
+    - ParentDataModifier
+    - alignmentLine
+    - (Draggable)
+    - (ScrollState)
 
 
 <!-->
+まとめということで、
+前半ではカスタムレイアウトとは何か？という話から始まり、
+いくつかある選択肢それぞれの特徴と、実際にどの方法を選択すると良いのかを紹介しました。
 
-TODO 考える
+後半では、DailySchedulerの実装を通して、こちらに列挙したような、CustomLayoutに必須の知識と具体的な使い方を紹介しました。
 
+そこそこ物量がありましたので、出てきた単語をキーワードとして頭の片隅に置いておいて、詳しく思い出したくなったらぜひ、こちらの資料を再度見て見ていただければ幸いです。
+
+-->
+
+
+---
+layout: section
+---
+
+## Today's Goal
+# I can create a custom layout! 
+
+<!--
+
+今日のゴールは
+Layout()関数を使って簡単なCustomLayoutを作れるようになる
+だったのですが、みなさんいかがでしょうか？
+できそうとかできなそうとか、ぜひTwitterにでも呟いていただけると後でニヤニヤしながら見れますのでぜひよろしくお願いいたします。
+
+では、以上で終わります。ご清聴いただきありがとうございました。
 -->
