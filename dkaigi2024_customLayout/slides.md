@@ -67,12 +67,86 @@ X
 改めまして、飯島 彩輝と申します。
 現在は株式会社UNEXTにてUnextという動画配信サービスのAndroid端末やFireTablet向けのAndroidアプリの開発をしております。
 
-社内外問わず、このご飯のアイコンで活動しています。今日はぜひこのアイコンだけでも覚えて帰っていただければと思います。
+社内外問わず、このご飯のアイコンで活動していますので今日はぜひこのアイコンだけでも覚えて帰っていただければと思います。
 手作りです。
 
-Droidkaigiに関連した話だと、2018年にTDDに関する発表をさせていただいて、2021年にはdroidNinjaに記事を投稿させていただいたりしておりまして、今回はかなり久々の登壇者としての参加となります。
+-->
+
+
+---
+layout: two-cols-header
+---
+
+# Droidkaigi
+
+<br/>
+
+### Second time in 6 years.
+
+
+::left::
+
+## Droidkaigi2019
+
+<br/>
+
+<img src="/tdd.png" style="height:200px;"/>
+
+https://www.youtube.com/watch?v=1eK_RBdqFMo
+
+::right::
+
+## Droidkaigi2021
+
+<br/>
+
+<img src="/kmm.png" style="height:200px; margin:0 auto;"/>
+
+https://ninjas.droidkaigi.jp/post/recruit/
+
+<!--
+
+Droidkaigiに関連した話だと、2019年にTDDに関する発表をさせていただいて、2021年にはdroidNinjaに記事を投稿させていただいたりしておりまして、スピーカーとしては6年ぶり2度目の参加となります。
 
 -->
+
+---
+layout: default
+---
+
+# U-NEXT
+
+<ul style="display:flex;">
+
+<img src="/unextno1.webp" style="height:400px; margin:0 auto;"/>
+
+<img src="/eiga.webp" style="height:400px; margin:0 auto;"/>
+
+<img src="/anime.webp" style="height:400px; margin:0 auto;"/>
+
+</ul>
+
+<!-->
+
+-->
+
+---
+layout: default
+---
+
+# U-NEXT
+
+<img src="/bmw.png" style="height:180px;"/>
+https://www.unext.co.jp/ja/press-room/bmw-2024-06-20
+
+
+<br/>
+<br/>
+
+<img src="/football.png" style="height:180px;"/>
+https://www.video.unext.jp/lp/football_pack
+
+
 
 ---
 layout: default
