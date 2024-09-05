@@ -378,7 +378,7 @@ layout: default
 
 <v-click>
 
-### Customize the position and size of mulitiple elements during the layout phase.
+### Customize the <b class="safe">position and size</b> of <b class="warn">mulitiple elements</b> during the layout phase.
 
 </v-click>
 
@@ -474,7 +474,7 @@ layout: default
 
 <v-clicks>
 
-### Customize the position and size of a single element during the layout phase.
+### Customize the <b class="safe">position and size</b> of a <b class="warn">single element</b> during the layout phase.
 
 </v-clicks>
 
@@ -565,7 +565,7 @@ layout: default
 
 <v-click>
 
-### Customize the position and size of multiple elements during the layout phase and change the elements themselves.
+### Customize the <b class="safe">position and size</b> of multiple elements during the layout phase and <b class="warn">change the elements</b> themselves.
 
 </v-click>
 
@@ -655,7 +655,7 @@ layout: default
 <br/>
 <v-click>
 
-### Change the layout elements based on the parent’s constraints
+### Change the layout elements <b class="warn">based on the parent’s constraints</b>
 </v-click>
 
 
