@@ -31,6 +31,15 @@ jobs:
       - name: Install dependencies
         run: nci
 
+      - name: print pwd
+        run: pwd
+
+      - name: print ls
+        run: ls
+
+      - name: print ls
+        run: ls node_modules
+
       - name: Build
         run: nr build --base /${{github.event.repository.name}}/
 
