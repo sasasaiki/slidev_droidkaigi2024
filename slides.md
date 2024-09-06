@@ -107,7 +107,7 @@ https://ninjas.droidkaigi.jp/post/recruit/
 
 <!--
 
-Droidkaigiに関連した話だと、2019年にTDDに関する発表をさせていただいて、2021年にはdroidNinjaに記事を投稿させていただいたりしておりまして、スピーカーとしては6年ぶり2度目の参加となります。
+Droidkaigiに関連した話だと、2019年にTDDに関する発表をさせていただいて、2021年にはDroidKaigi Ninjaずに記事を投稿させていただいたりしておりまして、スピーカーとしては6年ぶり2度目の参加となります。
 
 -->
 
@@ -128,6 +128,8 @@ layout: default
 </ul>
 
 <!-->
+関わっているサービス、Unextについても少しだけ紹介させてください。
+Unextは動画配信のサービスとなっておりまして、AndroidやiOS、webなど、様々な端末からご利用いただけます。
 
 -->
 
@@ -147,7 +149,11 @@ https://www.unext.co.jp/ja/press-room/bmw-2024-06-20
 <img src="/football.png" style="height:180px;"/>
 https://www.video.unext.jp/lp/football_pack
 
+<!-->
+最近のニュースとしては、MBWのカーナビから利用できるようになったり、サッカーのプレミアリーグ全試合の独占配信が始まったりと、私がいうのもなんですが、非常にあついサービスとなっておりますので
+ぜひ一度試しに使ってみていただければと思います。BMWを買っていたダクカ、お手元の端末でも試せますのでよろしくお願いいたします。
 
+<-->
 
 ---
 layout: default
