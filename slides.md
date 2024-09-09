@@ -53,7 +53,7 @@ layout: two-cols-header
 
 <img src="/github_code.png" style="height:300px;"/>
 
-<a href="https://github.com/sasasaiki/android_compose_daily_scheduler">sasasaiki/android_compose_daily_scheduler</a>
+<a href="https://github.com/sasasaiki/android_compose_daily_scheduler/blob/main/app/src/main/java/app/saiki/dailyscheduler/DailySchedule.kt">sasasaiki/android_compose_daily_scheduler</a>
 
 
 
