@@ -29,6 +29,34 @@ mdc: true
 # vs DeilyScheduler
 
 
+---
+layout: two-cols-header
+---
+
+
+# 使って知るCustomLayout vs DeilyScheduler
+
+::left::
+## slide (github pages)
+
+<br/>
+
+<img src="/slide_code.png" style="height:300px; "/>
+
+<a href="https://sasasaiki.github.io/slidev_droidkaigi2024/1">sasasaiki.github.io/slidev_droidkaigi2024</a>
+
+::right::
+
+## code (github)
+
+<br/>
+
+<img src="/github_code.png" style="height:300px;"/>
+
+<a href="https://github.com/sasasaiki/android_compose_daily_scheduler">sasasaiki/android_compose_daily_scheduler</a>
+
+
+
 <!--
 それでは始めます、よろしくお願いします。
 -->
@@ -2976,10 +3004,7 @@ layout: two-cols-header
 
 <!-->
 まとめということで、
-前半ではカスタムレイアウトとは何か？という話から始まり、
-いくつかある選択肢それぞれの特徴と、実際にどの方法を選択すると良いのかを紹介しました。
-
-後半では、DailySchedulerの実装を通して、こちらに列挙したような、CustomLayoutに必須の知識と具体的な使い方を紹介しました。
+今回はカスタムレイアウトとは何か？という話から始まり、DailySchedulerの実装を通して、こちらに列挙したような、CustomLayoutに必須の知識と具体的な使い方を紹介しました。
 
 そこそこ物量がありましたので、出てきた単語をキーワードとして頭の片隅に置いておいて、詳しく思い出したくなったらぜひ、こちらの資料を再度見ていただければ幸いです。
 
@@ -2999,6 +3024,39 @@ layout: section
 Layout()関数を使って簡単なCustomLayoutを作れるようになる
 だったのですが、みなさんいかがでしょうか？
 できそうとかできなそうとか、ぜひハッシュタグ付きでXに呟いていただけると後でニヤニヤしながら見れますのでぜひよろしくお願いいたします。
+-->
+
+
+---
+layout: two-cols-header
+---
+
+
+# 使って知るCustomLayout vs DeilyScheduler
+
+::left::
+## slide (github pages)
+
+<br/>
+
+<img src="/slide_code.png" style="height:300px; "/>
+
+<a href="https://sasasaiki.github.io/slidev_droidkaigi2024/1">sasasaiki.github.io/slidev_droidkaigi2024</a>
+
+::right::
+
+## code (github)
+
+<br/>
+
+<img src="/github_code.png" style="height:300px;"/>
+
+<a href="https://github.com/sasasaiki/android_compose_daily_scheduler">sasasaiki/android_compose_daily_scheduler</a>
+
+
+
+<!--
 
 では、以上で終わります。ご清聴いただきありがとうございました。
+
 -->
