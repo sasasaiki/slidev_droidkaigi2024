@@ -495,6 +495,7 @@ layout: default
 ## Can<br/>
 <v-clicks>
 
+- Layout elements
 - Handle a single element
 - Reference parent constraints
 
@@ -516,7 +517,8 @@ layout: default
 <!--
 できることと用途を確認します。
 Modifier.layoutは->
-ただ一つの要素をlayoutすることができます。→
+要素をレイアウトすることが可能です。->
+ただ一つの要素だけをlayoutすることができます。→
 そして、親の制約を参照することができます。→
 
 →レイアウトフェーズで単一の要素の位置とサイズをカスタマイズしたい場合に利用できます
@@ -658,7 +660,7 @@ BoxWithConstraints {
 ```
 
 <!--
-例えば、これは親のmaxWidthが600.dpより大きいか小さいかで、表示するComposableを絡むか、ろうにだし分けています。
+例えば、これは親のmaxWidthが600ドットdpより大きいか小さいかで、表示するComposableを絡むか、ろうにだし分けています。
 
 他の方法だった場合親の制約から取れる値はピクセルなのですがboxWithconstraintの場合はdpに変換された状態で取れるのでとてもお手軽です。
 -->
@@ -701,7 +703,7 @@ BoxWithConstraintsは、親の制約を参照できます。
 逆に、それ以外はできないので、サイズや、配置は、通常のBoxの挙動に任せることになります。
 
 →親の制約によって、中のComposableを変えたい場合に利用できます。
-
+（めくって一息つく）
 -->
 
 ---
@@ -859,7 +861,7 @@ TimeLabel、左側にある時刻のラベルです→
 
 横線　ラベルの上にある横線ですー＞
 
-予定を表現イベントと表示します→
+イベントを表示します→
 時間が重なっているイベントが完全に重なってしまわないように幅を調整します→
 イベントをドラッグ&ドロップで移動できるようにし→
 その際にきりのいい時刻、今回は15分刻みで移動されるようにし→
@@ -918,7 +920,7 @@ fun DailyScheduler(
 ```
 
 <!--
-まずは基本部分からです。
+まずは基本部分からです。->
 
 これから作るLayoutのfunをComposableで定義します。
 TimeLabelを外からカスタマイズできるように引数でComposableを受け取るようにしています。->
@@ -959,7 +961,7 @@ layout:
 // create contents
 val timeLabels = @Composable {
   repeat(24) { i ->
-      timeLabel(LocalDateTime.of(now.year, now.month, now.dayOfMonth, i, 0)) // In the list.
+      timeLabel(LocalDateTime.of(now.year, now.month, now.dayOfMonth, i, 0))
   }
 }
 
@@ -974,14 +976,14 @@ Layout(
 <!-->
 ではまずはLayoutに渡すcontent、コヨウソの作成です。->
 今回は一日分なので24回repeatして、渡されてきたtimeLabel関数にDateTimeを渡して呼び出しています。
-TimeLabelのComponentの中でDateTimeが呼べるので好きに表示することができます。
+TimeLabelのComponentの中でDateTimeが呼べるので好きに表示することができます。 ->
 
 そしてこれをcontetntとして渡してあげます。
 step1のcontentの追加は完了です。
 
 追加されたcontentはMeeasurePolicyのブロックの中で処理することができます。
 
-layoutに入っていくのですが、その前にラムダに何が渡されてくるのかを確認しましょう
+layoutに入っていく前にラムダに何が渡されてくるのかを確認しましょう
 
 -->
 
@@ -1304,7 +1306,7 @@ val placeable = measurable.measure(constraints.copy(
 
 <!-->
 
-これはおまけなんですが、感覚的にはmaxHeightにinfinityが入っていて、コヨウソのcomposableにMaxHeightがついていた時に高さがInfinityになってクラッシュするかと思ったんですが、->
+これはおまけなんですが、感覚的にはmaxHeightにinfinityが入っていて -> コヨウソのcomposableにMaxHeightがついていた時に高さがInfinityになってクラッシュするかと思ったんですが、->
 確認して見たところ、クラッシュはせずTextの場合はwrapContentと同じような挙動になりました。
 fillMaxをつけているのに最大サイズにならないときは親の制約を気にしてみると良いかもしれません。
 
@@ -1716,7 +1718,7 @@ layout: default
 <!--
 さて、次はイベントを置いていきます。
 
-まずはイベントのデータ構造を考えていきます。
+まずはイベントのデータを定義します。
 
 -->
 
@@ -1765,7 +1767,7 @@ fun DailyScheduler(
 
 <!--
 
-まずはカスタムレイアウトの引数に、表示するeventのリストとconposableを追加します
+次にカスタムレイアウトの引数に、表示するeventのリストとconposableを追加します
 
 -->
 
@@ -1920,7 +1922,7 @@ layout: default
 
 # Layout event
 
-```kt {*|2,7|9-10,12-13,15}
+```kt {*|2,7|9-15}
 layout(constraints.maxWidth, totalHeight) {
     val dataTimeYMap = hashMapOf<LocalDateTime, Int>()
     timeLabelPlacablesWithDataTime.forEachIndexed { index, (placeable, dateTime) ->
@@ -1944,7 +1946,8 @@ layout(constraints.maxWidth, totalHeight) {
 最後にLayout関数で配置しますー＞
 タイムラベルのyの位置を基準にしてEventのStartの位置を計算したいので、dateTimeとYのMapを作っておきます。
 →
-そしてStartTimeからラベルのY位置をとってきて、ミニッツの分だけずらしてやればokです。。
+そして、xはラベルと重ならないようにラベルの最大幅分だけずらしておいて
+YはStartTimeからラベルのY位置をとってきて、ミニッツの分だけずらせばokです。
 -->
 
 ---
@@ -2234,7 +2237,7 @@ data class WrappedCalendarEvent(
 ```
 
 <!--
-事前準備として、ドラッグしたアイテムのY位置のオフセットを大元のcomposableに持たせます。
+事前準備として、ドラッグしたアイテムのY位置のオフセットを大元のcomposableに持たせます。 ->
 
 そして、各イベントには、ドラッグ状態を表すdragStateを持たせます。
 
@@ -2266,7 +2269,7 @@ Box(
 <!--
 あとは、やることは結構簡単で、eventのcontentにDraggableをつけます。->
 そして、stateのラムダがdrag中に呼ばれるので、入ってくるdeltaでdraggingItemYOffsetを更新しましょう。->
-縦のドラッグなので、orientationはBerticalにしておきます。
+縦のドラッグなので、orientationはverticalにしておきます。
 
 -->
 
@@ -2437,7 +2440,7 @@ private fun findClosestFiveMinute(dateTime: LocalDateTime): Int {
 
 <!--
 
-まずは一番近い15の倍数の分を取得するメソッドを書きます。
+まずは一番近い15の倍数の、分を取得するメソッドを書きます。
 これはLayoutと直接関係ないので説明は割愛します。
 
 -->
@@ -2448,7 +2451,7 @@ layout: default
 
 # Find target minute
 
-```kt {*|5|6|7-9|10|12|14,16-18}
+```kt {*|5|6|7-9|10-12|14,16-18}
 eventPlaceablesWithEvent.forEach { (placeable, event) ->
     val (y, z) = if (event.dragState is DragState.None) {
         // not changed .. 
@@ -2474,7 +2477,14 @@ eventPlaceablesWithEvent.forEach { (placeable, event) ->
 <!--
 これを使っていきます。
 
-→offsetからなんふんぶん移動しているかを計算して、->そこから時刻を計算して、->mapから0分だった場合のyを取ってきて、->先ほどのメソッドで見つけた一番近くのキリがいいふんのぶんだけ加えて->yに反映してあげればOKです。
+→offsetからなんふんぶん移動しているかを計算して、->
+
+そこから時刻を計算して、->
+
+mapから0分だった場合のyを取ってきて、->
+
+先ほどのメソッドで見つけた一番近くのキリがいいふんのぶんだけ加えて->
+yに反映してあげればOKです。
 -->
 
 ---
@@ -2761,6 +2771,8 @@ layout: default
 
 ## Step
 
+<br/>
+
 - Calculate visible items count from viewPort
 - Calculate the index to display from the scroll offset
 - Determine display time from index and count
@@ -2878,7 +2890,9 @@ var wrappedEvents by remember(events, visibleTimeLabel) {
 ```
 
 <!-->
-そしてこのsetの中ににstartかendが含まれているEventを抽出します。->
+そしてこのsetの中ににstartかendが含まれているEventを抽出します。
+
+->
 
 こちら実はすごく長いeventがあったら表示されないんですが、直す時間がなかったのでそのままいきます。
 
@@ -2904,6 +2918,8 @@ timeLabelPlacablesWithDataTime.forEachIndexed { index, (placeable, dateTime) ->
 
 <!--
 あとはLayoutのTotalHeightを表示したい時刻のぶんだけ伸ばすようにして、今回だと24時間かける365日分ですね。
+
+->
 
 TimeLabelのyをstartIndexの分だけずらすようにしてやるだけで完成です。
 
@@ -2957,9 +2973,6 @@ layout: default
 そして一時間分スクロールするたびにRecompositionが走るようになっています。
 
 ということで無事、一通り実装を終えることができました。
-
-どうでしょうか、簡単でしたかね？
-私は大変でした
 
 -->
 
