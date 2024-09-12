@@ -94,10 +94,9 @@ X
 まずは自己紹介をさせていただきます。
 
 改めまして、飯島 彩輝と申します。
-現在は株式会社UNEXTにてUnextという動画配信サービスのAndroid端末やFireTablet向けのAndroidアプリの開発をしております。
+現在は株式会社UNEXTにてUnextという動画配信サービスのAndroidアプリの開発をしております。
 
-社内外問わず、このご飯のアイコンで活動していますので今日はぜひこのアイコンだけでも覚えて帰っていただければと思います。
-手作りです。
+基本的にこのご飯のアイコンで活動していますので今日はぜひこのアイコンだけでも覚えて帰っていただければと思います。
 
 -->
 
@@ -157,7 +156,7 @@ layout: default
 
 <!-->
 関わっているサービス、Unextについても少しだけ紹介させてください。
-Unextは動画配信のサービスとなっておりまして、AndroidやiOS、webなど、様々な端末からご利用いただけます。
+Unextは動画配信のサービスです。
 
 -->
 
@@ -178,7 +177,7 @@ https://www.unext.co.jp/ja/press-room/bmw-2024-06-20
 https://www.video.unext.jp/lp/football_pack
 
 <!-->
-最近のニュースとしては、MBWのカーナビから利用できるようになったり、サッカーのプレミアリーグ全試合の独占配信が始まったりと、私がいうのもなんですが、非常にあついサービスとなっておりますので
+最近のニュースとしては、BMWのカーナビから利用できるようになったり、サッカーのプレミアリーグ全試合の独占配信が始まったりと、私がいうのもなんですが、非常にあついサービスとなっておりますので
 ぜひ一度試しに使ってみていただければと思います。BMWを買っていたダクカ、お手元の端末でも試せますのでよろしくお願いいたします。
 
 <-->
@@ -235,7 +234,7 @@ layout: two-cols
 
 <!-->
 
-DailyScheduerというのはその日の予定が表示されて、スクロールができて、イベントをドラッグ＆ドロップで移動できるようなカレンダーアプリに使われそうなこのビューのことを今回は指しています。
+DailyScheduerというのはこの右に見えている、カレンダーアプリに使われそうな、1日の予定を表示するビューのことを指しています。
 
 詳細は後半に再度説明します。
 
@@ -254,8 +253,6 @@ layout: section
 
 本日のゴールは、Layout関数を使って簡単なCustomLayoutを作れるようになることです。
 
-一息
-
 -->
 
 
@@ -268,7 +265,7 @@ https://developer.android.com/develop/ui/compose/layouts/custom?hl=ja
 
 <!--
 
-では早速、CostomLayoutとは何かという話からしていきましょう。
+では早速、CostomLayoutとは何かという話からしていきます。
 
 Custom layoutについてはAndroidDevelopersにCustomLayoutというタイトルのページがあるのですが、定義が明文化はされていなかったため、
 今日の発表では、このページを参考に、
@@ -295,7 +292,7 @@ Compsoeの3つのフェーズ
 
 coposition,layout,draw、のうちの二番目のLayoutフェーズを独自で実装したComposableのことをCustomLayoutと呼ぼうと思います。
 
-Jetpack Composeが提供する標準のレイアウトコンポーネント Column、Row、Boxなどでは実現できない挙動を実装する際に作成することが多いです。
+Jetpack Composeが提供する標準のレイアウトコンポーネント Column、Row、Boxなどでは実現できない挙動を実装するのに使うことが多いです。
 
 -->
 
@@ -309,7 +306,7 @@ layout: section
 <!-->
 さて、複雑なUIを実現するために、カスタムレイアウトを作りたい。
 と思った時に取れる方法には、いくつか選択肢があります。
-第一歩として、どの方法を選ぶのが良いのか、というところから確認していきましょう。
+第一歩として、どの方法を選ぶのが良いのか、というところから確認していきます。
 -->
 
 ---
@@ -478,8 +475,6 @@ Column(
 ー＞
 text1とtext2を両方同じようにずらすといった使い方はできますが、それぞれを別の方向にずらすというような別々の処理はここではできません。
 
-（一息）
-
 -->
 
 
@@ -521,6 +516,8 @@ Modifier.layoutは->
 そして、親の制約を参照することができます。→
 
 →レイアウトフェーズで単一の要素の位置とサイズをカスタマイズしたい場合に利用できます
+
+（一息）
 -->
 
 
@@ -660,7 +657,7 @@ BoxWithConstraints {
 
 <!--
 例えば、これは親のmaxWidthが600dpより大きいか小さいかで、表示するComposableをカラムか、ロウにだし分けています。
-一息
+
 -->
 
 ---
@@ -780,12 +777,12 @@ G -->|No| H(Modifier.layout)
 
 
 <!-->
-ということで、今回作るDailySchedulerで試してみましょう。
+ということで、今回作るDailySchedulerで試してみます。
 
 まずはLayoutPhaseをカスタマイズする必要があるか、を考えます。
 既存のComposableでできないか、というところですね。
 
-今回の場合は、空間があったり、幅や高さを調整したりする必要があり、普通のCompossableで実現するのは難しそうなのでyes,で左に行きます。
+今回の場合は、空間があったり、幅や高さを調整したりする必要があり、普通のCompossableでは難しそうなのでyes,で左に行きます。
 
 次に、LayoutPhaseで、配置するcontentそのものを変更する必要があるかを考えます。
 
@@ -799,6 +796,8 @@ G -->|No| H(Modifier.layout)
 
 なので、yesに行きLayout関数にたどり着きました。
 このDailySchedulerはLayout関数で作成すると良さそうです。
+
+一息
 
 -->
 
@@ -850,7 +849,7 @@ layout: two-cols
 
 <!-->
 
-もう一度作るものの確認をしておきましょう
+作るものの確認をしておきます。
 
 今右側に見えている、1日のスケジュールを表示するUIを作っていきます。
 
@@ -921,7 +920,7 @@ fun DailyScheduler(
 まずは基本部分からです。->
 
 カスタムレイアウトのfunをComposableで定義します。
-TimeLabelを外からカスタマイズできるように引数で受け取るようにしています。->
+TimeLabelを外からカスタマイズできるように引数でComposableを受け取るようにしています。->
 
 ここがLayoutの定義です。
 
@@ -1034,6 +1033,8 @@ interface Measurable : IntrinsicMeasurable {
 <!--
 measureblesはMeasurableのリストです。
 Measurableは、measure関数が定義されたinterfaceで、これを使って子要素のサイズを測定することが可能です。
+
+（ここで一息）
 
 -->
 ---
@@ -1167,7 +1168,7 @@ Constraints(minWidth = 0, maxWidth = 1080, minHeight = 2400, maxHeight = Infinit
 
 <!--
 
-幅はさわっていないので、ハイトに注目してみましょう。→
+幅はさわっていないので、ハイトに注目してみます。→
 何もなかった場合は、minが0,maxが表示領域の高さになり、->
 
 fillMaxHeightを指定した場合にはminHeightとmaxHeightが表示領域の高さになります。->
@@ -1280,7 +1281,7 @@ layout: section
 
 <!-->
 
-具体的には、constraintsにmaxがinfinityかどうかをチェックするhasBounded何たらというメソッドが生えているので、それを使って、処理を分岐させることができます
+具体的には、constraintsにmaxがinfinityかどうかをチェックするhasBoundedはいと、もしくはWidthというメソッドが生えているので、それを使って、処理を分岐させることができます
 
 -->
 
@@ -1303,7 +1304,7 @@ val placeable = measurable.measure(constraints.copy(
 
 <!-->
 
-これはおまけなんですが、感覚的にはmaxHeightにinfinityが入っていて -> コヨウソのcomposableにMaxHeightがついていた時に高さがInfinityになってクラッシュするかと思ったんですが、->
+おまけ情報として、感覚的にはmaxHeightにinfinityが入っていて -> コヨウソのcomposableにMaxHeightがついていた時に高さがInfinityになってクラッシュするかと思ったんですが、->
 確認して見たところ、クラッシュはせずTextの場合はwrapContentと同じような挙動になりました。
 fillMaxをつけているのに最大サイズにならないときは親の制約を気にしてみると良いかもしれません。
 
@@ -1408,9 +1409,6 @@ minハイトには0、maxには一時間あたりの高さを指定してやり�
 
 measureの結果はPlaceableというクラスで返ってきます。このクラスから測定した結果の高さや幅を取得することが可能です。
 
-// ちなみにmeasuredHeighというものも生えていて、heightは最終的に表現されるサイズ、mesuredHeightは測定されたサイズで、基本的には一致しているが、場合によっては一致しないらしいので注意が必要です。
-
-// いろいろ試したんですが、一致しないケースを再現できなかったので、再現方法がわかる方いたらぜひ教えてください。
 -->
 
 ---
@@ -1453,7 +1451,7 @@ https://developer.android.com/develop/ui/compose/layouts/alignment-lines?hl=ja
 
 <!--
 
-alignmentLinesは今回使わないのですごく軽く説明するのですが、これを使うことで、親の直接的な親および間接的な親のLayoutフェーズに任意のIntを渡すことが可能です。
+alignmentLinesは今回使わないので軽い説明だけするのですが、これを使うことで、親の直接的な親および間接的な親のLayoutフェーズに任意のIntを渡すことが可能です。
 
 例えばTextのFirstBaselineなんかがこの仕組みを利用しています。
 
@@ -1461,7 +1459,7 @@ alignmentLinesは今回使わないのですごく軽く説明するのですが
 
 （ここで一息）
 
-ではlayout関数を使って配置をしていきましょう
+ではlayout関数を使って配置をしていきます。
 
 -->
 
@@ -1497,8 +1495,8 @@ layout(
 ->高さは表示する時間全てを置けるだけ必要なので、ラベルの数に一時間あたりの高さをかけたものになります。
 ここにMaxHeightを入れるとinfinityが入ってしまい、IllegalStateExceptionでcrashするのでご注意ください。
 
-
 ->
+
 blockの中ではこ要素を配置します。
 やることは先ほどmesureすることで作られたPlaceableのplaceを呼び出すだけです。
 xとyとzindexが指定できます。
@@ -1527,7 +1525,7 @@ layout: default
 
 <!--
 
-左がlabelにmodifierを指定していない場合、右がFillMaxHeightとpaddingを指定してみた場合です。
+左がlabelにmodifierを指定していない場合、右がFillMaxHeightとpaddingを指定した場合です。
 想定通り、1時間の範囲でサイズが決まっているのがわかります。
 
 -->
@@ -1543,7 +1541,7 @@ layout: default
 
 <!--
 
-では次、に横線の表示です。
+では次に横線の表示です。
 
 -->
 
@@ -1602,6 +1600,7 @@ Layout(
 
 属性の違うcomposableを扱う場合は、Listで渡すとMesureablesもそれぞれ別のリストで入ってきてくれるため使いやすいです。
 
+（一息）
 -->
 
 
@@ -2196,7 +2195,7 @@ layout: default
 
 ドラッグでもっと色々な動きをするのであれば2の方針も検討する必要があるかもしれません。
 
-具体的な実装を見てみましょう。
+具体的な実装を見てみます。
 -->
 
 
@@ -2587,7 +2586,7 @@ https://developer.android.com/develop/ui/compose/performance/stability/diagnose#
 
 <!--
 
-これは、多分EventのComposeがskippableじゃないからだろうなあということでComopse compier reportsを見てみると、このように
+こういう場合はComposableがskippableじゃない可能性が高いので、Comopse compier reportsを見てみます、するとこのように
 ->やはり、EventItemのComposableがskippableになっておらす、
 
 ->クラスの方を見てみるとCalenderEventのstartTimeとendTimeがUnstableとみなされています。
@@ -2638,7 +2637,7 @@ layout: default
 
 # Skippable?
 
-```kt {*|8,11-14|1}
+```kt {1,8,11-14}
 restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun EventItem(
   stable modifier: Modifier? = @static Companion
   stable event: WrappedCalendarEvent
@@ -2662,9 +2661,8 @@ https://developer.android.com/develop/ui/compose/performance/stability/diagnose#
 
 <!-->
 
-これでリビルドすると、このように->
-LocalDateTimeを使っている二つがstableとなり
-→ EventItemのComposableもskkippableとみなされます
+これでリビルドすると、このように、LocalDateTimeを使っている二つがstableとなり
+Composableもskkippableとみなされます
 
 <-->
 
@@ -2684,7 +2682,8 @@ layout: default
 <!-->
 
 結果、ドラッグしているアイテム以外のrecompositionは走らずにすむようになりました。
-挙動に影響が出ているわけではないので大きな問題ではないのですが一応紹介しました。
+
+// 挙動に影響が出ているわけではないので大きな問題ではないのですが一応紹介しました。
 
 <-->
 
@@ -2808,7 +2807,7 @@ scrollStateからviewPort、Viewの表示サイズが取れるので、それを
 次に、何番目から表示すればいいかを計算します、scrollStateのvalueからoffsetが取れるので、それを一時間あたりの高さで割ることで求められます。
 
 この10引いているのは、EventをStartTime基準で並べているため、手前にある程度長く余裕を持つためにやっています。
-これは雑な実装で10時間以上の予定があると多分うまく動かないのですが、今回は一旦おいておいています。
+つまり10時間以上の予定があるとうまく動かないのですが、今回は一旦おいておいています。
 
 どちらもデライブドステイトオブにしておいた方が余計な更新がなくてすみます。
 
@@ -3006,7 +3005,7 @@ layout: two-cols-header
 
 <!-->
 まとめということで、
-今回はカスタムレイアウトとは何か？という話から始まり、DailySchedulerの実装を通して、こちらに列挙したような、CustomLayoutに必須の知識と具体的な使い方を紹介しました。
+今回はカスタムレイアウトとは何か？という話から始まり、DailySchedulerの実装を通して、CustomLayoutに必須の知識と具体的な使い方を紹介しました。
 
 そこそこ物量がありましたので、出てきた単語をキーワードとして頭の片隅に置いておいて、詳しく思い出したくなったらぜひ、こちらの資料を再度見ていただければ幸いです。
 
