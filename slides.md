@@ -307,6 +307,8 @@ layout: section
 さて、複雑なUIを実現するために、カスタムレイアウトを作りたい。
 と思った時に取れる方法には、いくつか選択肢があります。
 第一歩として、どの方法を選ぶのが良いのか、というところから確認していきます。
+
+（ここで4分）
 -->
 
 ---
@@ -798,6 +800,7 @@ G -->|No| H(Modifier.layout)
 このDailySchedulerはLayout関数で作成すると良さそうです。
 
 一息
+（10分40秒）
 
 -->
 
@@ -1311,7 +1314,7 @@ fillMaxをつけているのに最大サイズにならないときは親の制�
 （ここで一息つく）
 
 では、実際にconstraintsを利用して子要素の測定をしていきます。
-
+(18分30秒)
 -->
 
 ---
@@ -2151,6 +2154,7 @@ layout: default
 
 完成です。
 
+（29分30秒）
 -->
 
 ---
@@ -2522,6 +2526,9 @@ eventPlaceablesWithEvent.forEach { (placeable, event) ->
 
 一息
 
+
+（32分0秒）
+
 -->
 
 ---
@@ -2609,7 +2616,7 @@ layout: default
 
 # Stability configuration file
 
-``` kt {1-3|6-13}
+```kt {1-3|6-13}
 // -------  compose_compiler_config.conf
 // Consider LocalDateTime stable
 java.time.LocalDateTime
@@ -2706,6 +2713,7 @@ layout: section
 
 最後に遅延レンダリングです。
 
+35分
 -->
 
 ---
@@ -2788,7 +2796,7 @@ layout: default
 
 # Calculate item count & index
 
-```kt {*|1,3-8,|1,10-16}
+```kt {1,3-8,|1,10-16}
 val scrollState = rememberScrollState()
 
 // Calculate visible items count from viewPort
