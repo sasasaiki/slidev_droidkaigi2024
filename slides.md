@@ -134,7 +134,7 @@ https://ninjas.droidkaigi.jp/post/recruit/
 
 <!--
 
-Droidkaigiに関連した話だと、2019年にTDDに関する発表をさせていただいて、2021年にはDroidKaigi Ninjaずに記事を投稿させていただいたりしておりまして、スピーカーとしては6年ぶり2度目の参加となります。
+Droidkaigiに関連した話だと、2019年にTDDに関する発表をさせていただいたことがありまして、ついこないだだと思っていたんですが数えてみたらもう6年も前でして、時の流れを感じております。
 
 -->
 
@@ -178,7 +178,7 @@ https://www.video.unext.jp/lp/football_pack
 
 <!-->
 最近のニュースとしては、BMWのカーナビから利用できるようになったり、サッカーのプレミアリーグ全試合の独占配信が始まったりと、私がいうのもなんですが、非常にあついサービスとなっておりますので
-ぜひ一度試しに使ってみていただければと思います。BMWを買っていたダクカ、お手元の端末でも試せますのでよろしくお願いいたします。
+ぜひ一度試しに使ってみていただければと思います。BMWを買っていただくか、お手元の端末でも試せますのでよろしくお願いいたします。
 
 <-->
 
@@ -1791,10 +1791,12 @@ Layout(
 ```
 
 <!--
-イベントのリストから、ebentのcomposeを同じだけ作って→渡します。
+イベントのリストから、eventのcomposeを同じだけ作って→渡します。
 
-これでLayoutの中でstartとendを見て配置すればいいのですが、
+これでLayoutの中でstartとendを見て配置すればいいのですが、一つ問題があります。
 ブロックに入ってきたmesurabelはeventの情報を持っていないので、今のままだとstartとendを参照することができません。
+
+（ここで25分！）
 -->
 
 ---
@@ -1838,11 +1840,11 @@ fun Modifier.calenderEventModifier(event: CalendarEvent) = this.then(
 ```
 
 <!--
-このように、Modifierの拡張カンスうして定義します。
+このように、Modifierの拡張関数として定義します。
 拡張関数では親に渡したいで－たを受け取り、
-中ではParentDataModifierを継承したオブジェクトを作成し、modifParentDataに受け取ったデータをセットします。
+中ではParentDataModifierを継承したオブジェクトを作成し、オーバーライドします。
 
-→あとは、使いたい要素、今回だとeventのmodifierに追加して親から参照したいデータを渡します。
+→あとは、子要素のModifierで呼び出し、親が参照したいデータを渡します。
 
 eventContentは中がどういう構造になっているかがわからないので、直接modifierを追加せずにBoxで囲んで追加するのが安全です。
 -->
@@ -1898,9 +1900,10 @@ val eventPlaceablesWithEvent = eventMeasureables.map { measurable ->
 
 
 <!-->
+→
 
 先ほどの通りeventをparentDataから取ります。->
-そしてeventが何分なのかをstartとendから求めます。->
+そしてeventが何分間なのかをstartとendから求めます。->
 一分あたりの高さをかけて高さを求めます。->
 幅はlabelと重ならないように、一番幅のあるラベル分だけ引いておきます。->
 
@@ -1941,6 +1944,8 @@ layout(constraints.maxWidth, totalHeight) {
 →
 そして、xはラベルと重ならないようにラベルの最大幅分だけずらしておいて
 YはStartTimeからラベルのY位置をとってきて、ミニッツの分だけずらせばokです。
+
+（ここで一息）
 -->
 
 ---
@@ -1981,7 +1986,7 @@ layout: default
 
 - Grouping event
 - Adjust width by group count
-- Adjust offset by index
+- Adjust xOffset by index
 
 
 <!--
@@ -2063,7 +2068,7 @@ data class WrappedCalendarEvent(
 
 そうしましたら、重なるイベントの数と位置をEventに持たせます。
 幅を決めるのと、xのoffsetを決めるのに必要です。ー＞
-CalenderEventを一枚ラップして、追加の情報として、Groupを定義しています。
+CalenderEventを一枚ラップして、追加の情報として、Groupを持たせています。
 
 -->
 
@@ -2366,6 +2371,8 @@ eventPlaceablesWithEvent.forEach { (placeable, event) ->
 ついでにzindexも1fにして、常に一番上に描画されるようにしています。
 
 これでドラッグができるようになりました。
+
+（一息）
 -->
 
 ---
@@ -2533,8 +2540,9 @@ layout: default
 
 ドラッグ完了したタイミングのonFinishDragEventでListの中身を更新する処理を呼び出し元の方に入れていますが特別なことはしていないので割愛します。
 
-これで一応ドラッグアンドドロップはできたのですが、実は一つパフォーマンスに関する問題が発生しています。
+で、これで一応ドラッグアンドドロップはできたのですが、実は一つパフォーマンスに関する問題が発生しています。
 
+（ここで33くらいがいいかな）
 -->
 
 
@@ -2563,7 +2571,7 @@ layout: default
 
 # Skippable?
 
-```kt {*|1|8,11-14}
+```kt {1,8,11-14}
 restartable scheme("[androidx.compose.ui.UiComposable]") fun EventItem(
   stable modifier: Modifier? = @static Companion
   unstable event: WrappedCalendarEvent
@@ -2586,12 +2594,11 @@ https://developer.android.com/develop/ui/compose/performance/stability/diagnose#
 
 <!--
 
-こういう場合はComposableがskippableじゃない可能性が高いので、Comopse compier reportsを見てみます、するとこのように
-->やはり、EventItemのComposableがskippableになっておらす、
+こういう場合はComposableがskippableじゃない可能性が高いです。
+なのでComopse compier reportsを見てみると、
+CalenderEventのstartTimeとendTimeがUnstableとなっており、それによってEventのComposableがSkippableになっていなさそうなのがわかりました。
 
-->クラスの方を見てみるとCalenderEventのstartTimeとendTimeがUnstableとみなされています。
-
-ですのでLocalDateTimeを安定しているということをcompilerに伝えると解決します。
+これはLocalDateTimeを安定しているということをcompilerに伝えると解決します。
 
 -->
 
@@ -2602,8 +2609,7 @@ layout: default
 
 # Stability configuration file
 
-``` kt
-
+``` kt {1-3|6-13}
 // -------  compose_compiler_config.conf
 // Consider LocalDateTime stable
 java.time.LocalDateTime
@@ -2625,7 +2631,9 @@ https://developer.android.com/develop/ui/compose/performance/stability/fix#kotli
 
 <!--
 
-具体的にはandroid developerにあるように、.confファいルに対象のpackage名を追加します。今回はLocalDateTimeです。そしてbuildGradleにこれらのKotlinOptionsを追加すればokです。
+具体的には.confファいルに対象のpackage名を追加します。今回はLocalDateTimeです。　→
+
+そしてbuildGradleにこれらのKotlinOptionsを追加すればokです。
 
 詳細はリンク先を見て見ていただければと思います。
 
@@ -2661,8 +2669,8 @@ https://developer.android.com/develop/ui/compose/performance/stability/diagnose#
 
 <!-->
 
-これでリビルドすると、このように、LocalDateTimeを使っている二つがstableとなり
-Composableもskkippableとみなされます
+これでリビルドすると、LocalDateTimeを使っている二つがstableとなり
+Composableもskkippableとみなされました。
 
 <-->
 
@@ -2710,7 +2718,7 @@ layout: section
 
 <!--
 
-これに関しては語弊があって申し訳ないのですが、やりたいこととしては、
+これに関しては語弊のある書き方をしてしまって申し訳ないのですが、やりたいこととしては、
 カスタムレイアウトが非常に長く、かつアイテムも大量に存在した場合にも、滑らかにスクロールできるようにしたい。
 という話になります。
 
@@ -2771,7 +2779,7 @@ layout: default
 <!--
 今回は、表示に必要な要素だけをContentに追加してみようという方針で
 
-viewPortとscrollOfssetをつかって必要な要素を絞ろう、というのを順にやっていきます。
+viewPortとscrollOfssetをつかって必要な要素を絞る、というのを順にやっていきます。
 -->
 
 ---
@@ -2809,7 +2817,7 @@ scrollStateからviewPort、Viewの表示サイズが取れるので、それを
 この10引いているのは、EventをStartTime基準で並べているため、手前にある程度長く余裕を持つためにやっています。
 つまり10時間以上の予定があるとうまく動かないのですが、今回は一旦おいておいています。
 
-どちらもデライブドステイトオブにしておいた方が余計な更新がなくてすみます。
+どちらもディライブドステイトオブにしておいた方が余計な更新がなくてすみます。
 
 -->
 
@@ -2958,7 +2966,7 @@ layout: default
 
 
 <!-->
-そして一時間分スクロールするたびにRecompositionが走るようになっています。
+そして一時間分スクロールするたびにRecompositionが走ります。
 
 ということで無事、一通り実装を終えることができました。
 
