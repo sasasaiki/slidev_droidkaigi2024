@@ -253,6 +253,8 @@ layout: section
 
 本日のゴールは、Layout関数を使って簡単なCustomLayoutを作れるようになることです。
 
+では初めて行くのですが、
+
 -->
 
 ---
