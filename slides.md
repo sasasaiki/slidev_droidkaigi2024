@@ -134,7 +134,7 @@ https://ninjas.droidkaigi.jp/post/recruit/
 
 <!--
 
-Droidkaigiに関連した話だと、2019年にTDDに関する発表をさせていただいたことがありまして、ついこないだだと思っていたんですが数えてみたらもう5年も前でして、時の流れを感じています。
+Droidkaigiに関連した話だと、2019年にTDDに関する発表をさせていただいたことがありまして、ついこないだだと思っていたんですが数えてみたらもう5年も前で、時の流れを感じています。
 
 -->
 
@@ -253,7 +253,7 @@ layout: section
 
 本日のゴールは、Layout関数を使って簡単なCustomLayoutを作れるようになることです。
 
-では初めて行くのですが、
+でははじめて行くのですが、
 
 -->
 
@@ -310,7 +310,7 @@ https://developer.android.com/develop/ui/compose/phases
 
 Compsoeの3つのフェーズ
 
-coposition,layout,draw、のうちの二番目のLayoutフェーズを独自で実装したComposableのことをCustomLayoutと呼ぼうと思います。
+coposition,layout,draw、のうちの二番目のLayoutフェーズを独自で実装したComposableのことをCustomLayoutと呼びます。
 
 Jetpack Composeが提供する標準のレイアウトコンポーネント Column、Row、Boxなどでは実現できない挙動を実装するのに使うことが多いです。
 
@@ -579,8 +579,8 @@ SubcomposeLayout { constraints ->
 
 <!-->
 
-すごく軽い説明ですが、使い方としては、Layout関数でも必要な処理に加えて、->
-このSubcomposeというメソッドで、coposableのcompositionを行いmesurableを作成することができます。
+すごく軽い説明なんですが、使い方としては、Layout関数でも必要な処理に加えて、->
+このSubcomposeというメソッドで、compositionを行いmesurableを作成することができます。
 
 <-->
 
